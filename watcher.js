@@ -4,7 +4,7 @@ const
   exec = require('child_process').exec,
   suffixesForJsRecompilation = ['ts', 'tsx'],
   suffixesForCssRecompilation = ['scss'],
-  compilationTimeout = 500;
+  compilationDebounceTime = 0;
 
 let
   jsCompilationTimeoutId = null;
@@ -42,7 +42,7 @@ const debounce = function(timeoutId, f) {
     clearTimeout(timeoutId);
   }
 
-  return setTimeout(f, compilationTimeout);
+  return setTimeout(f, compilationDebounceTime);
 }
 
 const runTask = function(task) {

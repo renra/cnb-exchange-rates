@@ -10,7 +10,7 @@ RUN curl -L -o dumb-init.deb https://github.com/Yelp/dumb-init/releases/download
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-RUN npm install -g node-watch babel-cli typescript sass
+RUN npm install -g node-watch typescript sass uglify-js@3.12.1
 
 COPY package.json package.json
 COPY tsconfig.json tsconfig.json
