@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  app:
+    build: .
+    command: node server.js
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    volumes:
+      - ./Makefile:/usr/src/app/Makefile
+      - ./server.js:/usr/src/app/server.js
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./src:/usr/src/app/src
+
+  watcher:
+    build: .
+    command: node watcher.js
+    volumes:
+      - ./Makefile:/usr/src/app/Makefile
+      - ./watcher.js:/usr/src/app/watcher.js
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./src:/usr/src/app/src

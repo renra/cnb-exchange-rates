@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,  // Maybe just for production build?
+    "noUnusedParameters": true, // Maybe just for production build?
+    "strict": true,
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    // Not sure whether this is going to be actually useful or not
+    //"suppressImplicitAnyIndexErrors": true,
+    "downlevelIteration": true,
+    "jsx": "react"
+  },
+  "include": ["src/js/**/*"]
+}
