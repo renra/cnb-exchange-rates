@@ -11,8 +11,8 @@ services:
     volumes:
       - ./Makefile:/usr/src/app/Makefile
       - ./server.js:/usr/src/app/server.js
-      - ./tsconfig.json:/usr/src/app/tsconfig.json
       - ./src:/usr/src/app/src
+      - ./tsconfig.json:/usr/src/app/tsconfig.json
 
   watcher:
     build: .
@@ -20,5 +20,5 @@ services:
     volumes:
       - ./Makefile:/usr/src/app/Makefile
       - ./watcher.js:/usr/src/app/watcher.js
-      - ./tsconfig.json:/usr/src/app/tsconfig.json
       - ./src:/usr/src/app/src
+      - ./tsconfig.json:/usr/src/app/tsconfig.json

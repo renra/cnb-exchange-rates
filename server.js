@@ -56,14 +56,12 @@ const getIndexBody = function(variables) {
       </head>
 
       <body>
-        <div id="outlet"></div>
-
         <script src="/src/dist/app.js"></script>
+        <div id="outlet"></div>
 
         <script type="text/javascript">
           // Look! I'm client-side JavaScript in server-side JavaScript!
-          var node = document.getElementById('outlet');
-          var appName = 'CNBExchangeRates';
+          CNBExchangeRates('outlet');
         </script>
       </body>
     </html>

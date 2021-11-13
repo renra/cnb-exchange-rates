@@ -71,14 +71,14 @@ const compileJs = function() {
   console.log('');
   console.log('Compiling JS');
 
-  runTask('make compile_to_js');
+  runTask('make js_for_development');
 }
 
 const compileCss = function() {
   console.log('');
   console.log('Compiling CSS');
 
-  runTask('make compile_to_css_for_development');
+  runTask('make css_for_development');
 }
 
 const compile = function() {

@@ -28,19 +28,29 @@ clean_css:
 
 # Development #
 
-dev: compile_to_js compile_to_css_for_development
+dev: clean js_for_development css_for_development
 
+js_for_development: clean_js typecheck_js compile_to_js_for_development
 
-compile_to_css_for_development: clean_css
+compile_to_js_for_development:
+	esbuild ${JS_INPUT} --bundle --outfile=${JS_OUTPUT}
+
+css_for_development: clean_css compile_to_css_for_development
+
+compile_to_css_for_development:
 	sass --no-source-map ${CSS_INPUT}:${CSS_OUTPUT}
 
 
 # Production #
 
-build: clean compile_to_js compile_to_css_for_development uglify_js gzip_js compile_to_css gzip_css
+build: clean typecheck_js compile_to_js compile_to_css_for_development uglify_js gzip_js compile_to_css gzip_css
+
+typecheck_js:
+	tsc
 
 compile_to_js:
-	tsc --outFile ${JS_OUTPUT}
+	# tsc --outFile ${JS_OUTPUT}
+	esbuild ${JS_INPUT} --bundle --outfile=${JS_OUTPUT}
 
 uglify_js:
 	uglifyjs --compress --mangle -- ${JS_OUTPUT} > ${JS_MIN_OUTPUT}

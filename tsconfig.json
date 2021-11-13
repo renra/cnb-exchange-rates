@@ -2,15 +2,17 @@
   "compilerOptions": {
     "target": "es6",
     "noImplicitReturns": true,
-    "noUnusedLocals": true,  // Maybe just for production build?
-    "noUnusedParameters": true, // Maybe just for production build?
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "strict": true,
-    "moduleResolution": "node",
+    "esModuleInterop": true,    // Cannot import react without this
     "forceConsistentCasingInFileNames": true,
-    // Not sure whether this is going to be actually useful or not
-    //"suppressImplicitAnyIndexErrors": true,
+    "moduleResolution": "node",
     "downlevelIteration": true,
-    "jsx": "react"
+    "jsx": "react",
+    "allowJs": true,
+    "noEmit": true,             // Bundling is not done by tsc
+    "skipLibCheck": true
   },
   "include": ["src/js/**/*"]
 }
