@@ -43,17 +43,13 @@ compile_to_css_for_development:
 
 # Production #
 
-build: clean typecheck_js compile_to_js compile_to_css_for_development uglify_js gzip_js compile_to_css gzip_css
+build: clean typecheck_js compile_to_js compile_to_css_for_development gzip_js compile_to_css gzip_css
 
 typecheck_js:
 	tsc
 
 compile_to_js:
-	# tsc --outFile ${JS_OUTPUT}
-	esbuild ${JS_INPUT} --bundle --outfile=${JS_OUTPUT}
-
-uglify_js:
-	uglifyjs --compress --mangle -- ${JS_OUTPUT} > ${JS_MIN_OUTPUT}
+	esbuild ${JS_INPUT} --bundle --minify --outfile=${JS_MIN_OUTPUT}
 
 gzip_js:
 	yes | gzip --keep --best --force ${JS_MIN_OUTPUT} > ${JS_MIN_GZIPPED_OUTPUT}

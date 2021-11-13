@@ -12,7 +12,7 @@
     "jsx": "react",
     "allowJs": true,
     "noEmit": true,             // Bundling is not done by tsc
-    "skipLibCheck": true
+    "skipLibCheck": true        // This reduces the type-checking time a lot
   },
   "include": ["src/js/**/*"]
 }
