@@ -1,4 +1,5 @@
 import React from 'react';
+import * as ExchangeRatesResponse from '../requests/ExchangeRates';
 import { useExchangeRatesContext } from '../contexts/ExchangeRatesContext';
 
 const ExchangeRates = (): JSX.Element => {
@@ -9,16 +10,23 @@ const ExchangeRates = (): JSX.Element => {
       type: 'EXCHANGE_RATES_LOADING_STARTED'
     });
 
-    //fetch('http://www.cnb.cz/cs/financni_trhy/devizovy_trh/kurzy_devizoveho_trhu/denni_kurz.txt')
     fetch('/kurzy')
-      .then(_ => {
-        dispatch({
-          type: 'EXCHANGE_RATES_LOADING_SUCCEEDED',
-          response: {
-            rates: [], //TODO
-            valid_on: new Date()
-          }
-        });
+      .then(response => {
+        ExchangeRatesResponse.parseAndValidate(response)
+          .then(exchangeRates => {
+            dispatch({
+              type: 'EXCHANGE_RATES_LOADING_SUCCEEDED',
+              response: {
+                rates: exchangeRates,
+                valid_on: new Date()
+              }
+            });
+          })
+          .catch(_ => {
+            dispatch({
+              type: 'EXCHANGE_RATES_PARSING_FAILED',
+            });
+          })
       })
       .catch(err => {
         dispatch({
@@ -40,6 +48,10 @@ const ExchangeRates = (): JSX.Element => {
         <h1>Waiting for data</h1>
       );
 
+        //{ state.exchangeRatesRequestState.rates.map((rate, i) => {
+        //    return( <div key={i}>i</div> );
+        //})}
+
     case 'success':
       return (
         <h1>Data fetched</h1>
@@ -50,10 +62,6 @@ const ExchangeRates = (): JSX.Element => {
         <h1>Failed to fetch data</h1>
       );
   }
-
-  return (
-    <h1>Hello World from a component!</h1>
-  );
 }
 
 export default ExchangeRates;

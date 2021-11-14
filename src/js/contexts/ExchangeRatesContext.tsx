@@ -25,6 +25,9 @@ type Action =
       type: 'EXCHANGE_RATES_LOADING_FAILED',
       error: string
     }
+  | {
+      type: 'EXCHANGE_RATES_PARSING_FAILED',
+    }
 
 const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -53,6 +56,16 @@ const reducer = (state: State, action: Action): State => {
         exchangeRatesRequestState: {
           state: 'failure',
           error: action.error
+        }
+      };
+    }
+
+    case 'EXCHANGE_RATES_PARSING_FAILED': {
+      return {
+        ...state,
+        exchangeRatesRequestState: {
+          state: 'failure',
+          error: 'Exchange rates failed to parse'
         }
       };
     }
