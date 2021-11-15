@@ -21,7 +21,7 @@ export const parse = (serializedRates : string) : [ ExchangeRate[], string[] ] =
     const columns = line.split('|');
     if(columns.length === 5) {
       const baseAmount = parseInt(columns[2]),
-        rate = parseFloat(columns[4]);
+        rate = parseFloat(columns[4].replace(',', '.'));
 
       if(isNaN(baseAmount) || isNaN(rate)) {
         droppedLines.push(line);

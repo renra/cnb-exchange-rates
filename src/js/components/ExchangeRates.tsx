@@ -48,13 +48,24 @@ const ExchangeRates = (): JSX.Element => {
         <h1>Waiting for data</h1>
       );
 
-        //{ state.exchangeRatesRequestState.rates.map((rate, i) => {
-        //    return( <div key={i}>i</div> );
-        //})}
 
     case 'success':
+      const response = state.exchangeRatesRequestState.response;
+
       return (
-        <h1>Data fetched</h1>
+        <div>
+          <h1>Data fetched</h1>
+
+          {
+            response.rates.map((exchangeRate, i) => {
+              return(
+                <div key={i}>
+                  { exchangeRate.currencyCode } | { exchangeRate.country } | { exchangeRate.baseAmount } | { exchangeRate.rate }
+                </div>
+              );
+            })
+          }
+        </div>
       );
 
     case 'failure':
