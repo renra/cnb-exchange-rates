@@ -17,7 +17,7 @@ const ExchangeRates = (): JSX.Element => {
             dispatch({
               type: 'EXCHANGE_RATES_LOADING_SUCCEEDED',
               response: {
-                rates: exchangeRates,
+                exchangeRates: exchangeRates,
                 valid_on: new Date()
               }
             });
@@ -57,7 +57,7 @@ const ExchangeRates = (): JSX.Element => {
           <h1>Data fetched</h1>
 
           {
-            response.rates.map((exchangeRate, i) => {
+            response.exchangeRates.map((exchangeRate, i) => {
               return(
                 <div key={i}>
                   { exchangeRate.currencyCode } | { exchangeRate.country } | { exchangeRate.baseAmount } | { exchangeRate.rate }

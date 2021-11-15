@@ -7,7 +7,7 @@ export interface ExchangeRate {
 }
 
 export interface ExchangeRatesResponse {
-  rates: ExchangeRate[];
+  exchangeRates: ExchangeRate[];
   valid_on: Date;
 }
 
