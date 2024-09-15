@@ -56,6 +56,7 @@ const getIndexBody = function(variables) {
       </head>
 
       <body>
+        <script src="/src/dist/polyfills.js"></script>
         <script src="/src/dist/app.js"></script>
         <div id="outlet"></div>
 

@@ -13,6 +13,7 @@ services:
       - ./server.js:/usr/src/app/server.js
       - ./src:/usr/src/app/src
       - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./node_modules:/usr/src/app/node_modules
 
   watcher:
     build: .
@@ -22,3 +23,4 @@ services:
       - ./watcher.js:/usr/src/app/watcher.js
       - ./src:/usr/src/app/src
       - ./tsconfig.json:/usr/src/app/tsconfig.json
+      - ./node_modules:/usr/src/app/node_modules
