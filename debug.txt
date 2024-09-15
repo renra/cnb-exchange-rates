@@ -1,0 +1,1 @@
+https://explorer-api.walletconnect.com/v3/wallets?projectId=ba2e675298b4da3e862de7fbef16de91&sdks=sign_v2&search=Leap%20Cosmos%20Wallet

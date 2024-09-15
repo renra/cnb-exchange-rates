@@ -128,7 +128,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
 
   return (
     <>
-      <h1>Hello. This is version 3</h1>
+      <h1>Hello. This is version 4</h1>
 
       <>
         <div>
@@ -178,7 +178,7 @@ function App(): JSX.Element {
     const walletManager = new WalletManager(
       [chain],
       [...keplrWallets, ...leapWallets],
-      new Logger('DEBUG'),
+      new Logger('INFO'),
       true,
       true,
       undefined,
@@ -186,7 +186,7 @@ function App(): JSX.Element {
       "icns",
       {
         signClient: {
-          projectId: '0592f75fa032204a69cda88879fcc53c',
+          projectId: 'ba2e675298b4da3e862de7fbef16de91',
           // logger: generateClientLogger({ opts: { prettyPrint: true } }).logger
         }
       },
