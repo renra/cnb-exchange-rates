@@ -17,28 +17,22 @@ type InnerInnerProps = {
   walletManager: WalletManager
 }
 
-const connectViaCosmos = async (walletRepo: WalletRepo, wallet: ChainWalletBase) => {
-  // const wc = new WalletConnect()
-
-  // const connector = await wc.connect({
-  // })
-  // console.log(connector.connected)
-  
-  // return wallet.connect(false)
+const connect = async (walletRepo: WalletRepo, wallet: ChainWalletBase) => {
   return walletRepo.connect(wallet.walletName, false)
 }
 
-const connect = async (walletRepo: WalletRepo, wallet: ChainWalletBase) => {
-  return connectViaCosmos(walletRepo, wallet)
+const disconnect = async (walletRepo: WalletRepo, wallet: ChainWalletBase) => {
+  return walletRepo.disconnect(wallet.walletName, false)
 }
 
 const InnerInner = (props: InnerInnerProps) : JSX.Element => {
-  // const [anotherState, setAnotherState] = useState<AnotherState | undefined>(undefined)
-
   const [render, forceRender] = React.useState(0)
   const [state, setState] = React.useState<State>(State.Init)
   const [data, setData] = React.useState<Data | undefined>(undefined)
   const [message, setMessage] = React.useState<string | undefined>(undefined)
+
+  // TODO: Need to update this when preserving session after refresh
+  const [wallet, setWallet] = React.useState<ChainWalletBase | undefined>(undefined)
 
   React.useEffect(
     () => {
@@ -89,46 +83,27 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
 
   const handleConnect = React.useCallback(
     (wallet: ChainWalletBase) => {
-      // wallet.updateCallbacks({
-      //   afterConnect: () => {
-      //     setState({
-      //       wallet,
-      //       state: { type: 'connected' }
-      //     })
-      //   },
-      //   afterDisconnect : () => {
-      //     setState(undefined)
-      //   },
-      // })
-
-      // setState({ wallet, state: { type: 'connecting' } })
+      setWallet(wallet)
       connect(props.walletRepo, wallet)
-        // .catch((error) => { setState({ wallet, state: { type: 'error', error } }) })
     },
     [props.walletRepo]
   )
 
-  // useEffect(() => {
-  //   if(state?.state.type === 'error') {
-  //     console.error(state.state.error)
-  //   }
-    
-  // }, [state?.state.type])
-            // { 'error' in state.state &&
-            //     <>
-            //       <div>
-            //         And the error name is {state.state.error.name}
-            //       </div>
+  const handleDisconnect = React.useCallback(
+    (wallet: ChainWalletBase) => {
+      disconnect(props.walletRepo, wallet)
+    },
+    [props.walletRepo]
+  )
 
-            //       <div>
-            //         And the error message is {state.state.error.message}
-            //       </div>
-            //     </>
-            // }
+  console.log(wallet)
+  console.log(data)
 
   return (
     <>
-      <h1>Hello. This is version 4</h1>
+      <h1>Hello. This is version 5</h1>
+
+      { data && wallet && <div><button onClick={() => handleDisconnect(wallet)}>Disconnect</button></div>}
 
       <>
         <div>
@@ -187,7 +162,6 @@ function App(): JSX.Element {
       {
         signClient: {
           projectId: 'ba2e675298b4da3e862de7fbef16de91',
-          // logger: generateClientLogger({ opts: { prettyPrint: true } }).logger
         }
       },
       undefined,
@@ -205,7 +179,7 @@ function App(): JSX.Element {
       return (
         <>
           <h1>Hello</h1>
-          <div>Chain found</div>
+          <div>Wallet repo not found</div>
         </>
       );
     }
