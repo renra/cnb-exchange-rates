@@ -33731,7 +33731,7 @@ For more info, visit https://reactjs.org/link/mock-scheduler`);
         throw new Error("Secure random number generation is not supported by this browser.\nUse Chrome, Firefox or Internet Explorer 11");
       }
       var Buffer2 = require_safe_buffer().Buffer;
-      var crypto2 = window.crypto;
+      var crypto2 = global.crypto || global.msCrypto;
       if (crypto2 && crypto2.getRandomValues) {
         module2.exports = randomBytes2;
       } else {
@@ -385657,10 +385657,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   }
 
   // node_modules/@walletconnect/jsonrpc-provider/dist/index.es.js
-  console.log("@walletconnec/jsonrpc-provider");
   var o4 = class extends r2 {
     constructor(t) {
-      console.log(new import_events7.EventEmitter());
       super(t), this.events = new import_events7.EventEmitter(), this.hasRegisteredEventListeners = false, this.connection = this.setConnection(t), this.connection.connected && this.registerEventListeners();
     }
     async connect(t = this.connection) {
@@ -385705,13 +385703,9 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       return t;
     }
     onPayload(t) {
-      this.events.emit("payload", t), isJsonRpcResponse(t) ? this.events.emit(`${t.id}`, t) : this.events.emit("message", {
-        type: t.method,
-        data: t.params
-      });
+      this.events.emit("payload", t), isJsonRpcResponse(t) ? this.events.emit(`${t.id}`, t) : this.events.emit("message", { type: t.method, data: t.params });
     }
     onClose(t) {
-      console.log(t);
       t && t.code === 3e3 && this.events.emit("error", new Error(`WebSocket connection closed abnormally with code: ${t.code} ${t.reason ? `(${t.reason})` : ""}`)), this.events.emit("disconnect");
     }
     async open(t = this.connection) {
@@ -385832,7 +385826,6 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
 
   // node_modules/@walletconnect/core/dist/index.es.js
   var import_lodash = __toESM(require_lodash());
-  console.log("@walletconnect/core index.es.js");
   function Ds2(o5, e2) {
     if (o5.length >= 255) throw new TypeError("Alphabet too long");
     for (var t = new Uint8Array(256), s4 = 0; s4 < t.length; s4++) t[s4] = 255;
@@ -385880,11 +385873,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       if (p4) return p4;
       throw new Error(`Non-${e2} character`);
     }
-    return {
-      encode: g3,
-      decodeUnsafe: m3,
-      decode: b5
-    };
+    return { encode: g3, decodeUnsafe: m3, decode: b5 };
   }
   var ms2 = Ds2;
   var bs2 = ms2;
@@ -385933,14 +385922,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       throw RangeError(`Unable to decode multibase string ${JSON.stringify(e2)}, only inputs prefixed with ${Object.keys(this.decoders)} are supported`);
     }
   };
-  var Je = (o5, e2) => new ws2({
-    ...o5.decoders || {
-      [o5.prefix]: o5
-    },
-    ...e2.decoders || {
-      [e2.prefix]: e2
-    }
-  });
+  var Je = (o5, e2) => new ws2({ ...o5.decoders || { [o5.prefix]: o5 }, ...e2.decoders || { [e2.prefix]: e2 } });
   var Is2 = class {
     constructor(e2, t, s4, i5) {
       this.name = e2, this.prefix = t, this.baseEncode = s4, this.baseDecode = i5, this.encoder = new Es2(e2, t, s4), this.decoder = new vs2(e2, t, i5);
@@ -385952,27 +385934,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       return this.decoder.decode(e2);
     }
   };
-  var ne2 = ({
-    name: o5,
-    prefix: e2,
-    encode: t,
-    decode: s4
-  }) => new Is2(o5, e2, t, s4);
-  var X = ({
-    prefix: o5,
-    name: e2,
-    alphabet: t
-  }) => {
-    const {
-      encode: s4,
-      decode: i5
-    } = bs2(t, e2);
-    return ne2({
-      prefix: o5,
-      name: e2,
-      encode: s4,
-      decode: (r3) => Ye(i5(r3))
-    });
+  var ne2 = ({ name: o5, prefix: e2, encode: t, decode: s4 }) => new Is2(o5, e2, t, s4);
+  var X = ({ prefix: o5, name: e2, alphabet: t }) => {
+    const { encode: s4, decode: i5 } = bs2(t, e2);
+    return ne2({ prefix: o5, name: e2, encode: s4, decode: (r3) => Ye(i5(r3)) });
   };
   var Ts2 = (o5, e2, t, s4) => {
     const i5 = {};
@@ -385992,210 +385957,47 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var Cs2 = (o5, e2, t) => {
     const s4 = e2[e2.length - 1] === "=", i5 = (1 << t) - 1;
     let r3 = "", n5 = 0, a4 = 0;
-    for (let c6 = 0; c6 < o5.length; ++c6)
-      for (a4 = a4 << 8 | o5[c6], n5 += 8; n5 > t; ) n5 -= t, r3 += e2[i5 & a4 >> n5];
-    if (n5 && (r3 += e2[i5 & a4 << t - n5]), s4)
-      for (; r3.length * t & 7; ) r3 += "=";
+    for (let c6 = 0; c6 < o5.length; ++c6) for (a4 = a4 << 8 | o5[c6], n5 += 8; n5 > t; ) n5 -= t, r3 += e2[i5 & a4 >> n5];
+    if (n5 && (r3 += e2[i5 & a4 << t - n5]), s4) for (; r3.length * t & 7; ) r3 += "=";
     return r3;
   };
-  var f3 = ({
-    name: o5,
-    prefix: e2,
-    bitsPerChar: t,
-    alphabet: s4
-  }) => ne2({
-    prefix: e2,
-    name: o5,
-    encode(i5) {
-      return Cs2(i5, s4, t);
-    },
-    decode(i5) {
-      return Ts2(i5, s4, t, o5);
-    }
-  });
-  var Ss2 = ne2({
-    prefix: "\0",
-    name: "identity",
-    encode: (o5) => _s2(o5),
-    decode: (o5) => fs2(o5)
-  });
-  var Ps2 = Object.freeze({
-    __proto__: null,
-    identity: Ss2
-  });
-  var Rs2 = f3({
-    prefix: "0",
-    name: "base2",
-    alphabet: "01",
-    bitsPerChar: 1
-  });
-  var xs2 = Object.freeze({
-    __proto__: null,
-    base2: Rs2
-  });
-  var Os2 = f3({
-    prefix: "7",
-    name: "base8",
-    alphabet: "01234567",
-    bitsPerChar: 3
-  });
-  var As2 = Object.freeze({
-    __proto__: null,
-    base8: Os2
-  });
-  var Ns2 = X({
-    prefix: "9",
-    name: "base10",
-    alphabet: "0123456789"
-  });
-  var Ls2 = Object.freeze({
-    __proto__: null,
-    base10: Ns2
-  });
-  var zs2 = f3({
-    prefix: "f",
-    name: "base16",
-    alphabet: "0123456789abcdef",
-    bitsPerChar: 4
-  });
-  var Ms2 = f3({
-    prefix: "F",
-    name: "base16upper",
-    alphabet: "0123456789ABCDEF",
-    bitsPerChar: 4
-  });
-  var $s2 = Object.freeze({
-    __proto__: null,
-    base16: zs2,
-    base16upper: Ms2
-  });
-  var ks2 = f3({
-    prefix: "b",
-    name: "base32",
-    alphabet: "abcdefghijklmnopqrstuvwxyz234567",
-    bitsPerChar: 5
-  });
-  var Fs2 = f3({
-    prefix: "B",
-    name: "base32upper",
-    alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567",
-    bitsPerChar: 5
-  });
-  var Us2 = f3({
-    prefix: "c",
-    name: "base32pad",
-    alphabet: "abcdefghijklmnopqrstuvwxyz234567=",
-    bitsPerChar: 5
-  });
-  var Ks2 = f3({
-    prefix: "C",
-    name: "base32padupper",
-    alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=",
-    bitsPerChar: 5
-  });
-  var Bs2 = f3({
-    prefix: "v",
-    name: "base32hex",
-    alphabet: "0123456789abcdefghijklmnopqrstuv",
-    bitsPerChar: 5
-  });
-  var Vs2 = f3({
-    prefix: "V",
-    name: "base32hexupper",
-    alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUV",
-    bitsPerChar: 5
-  });
-  var js2 = f3({
-    prefix: "t",
-    name: "base32hexpad",
-    alphabet: "0123456789abcdefghijklmnopqrstuv=",
-    bitsPerChar: 5
-  });
-  var qs2 = f3({
-    prefix: "T",
-    name: "base32hexpadupper",
-    alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUV=",
-    bitsPerChar: 5
-  });
-  var Gs2 = f3({
-    prefix: "h",
-    name: "base32z",
-    alphabet: "ybndrfg8ejkmcpqxot1uwisza345h769",
-    bitsPerChar: 5
-  });
-  var Hs2 = Object.freeze({
-    __proto__: null,
-    base32: ks2,
-    base32upper: Fs2,
-    base32pad: Us2,
-    base32padupper: Ks2,
-    base32hex: Bs2,
-    base32hexupper: Vs2,
-    base32hexpad: js2,
-    base32hexpadupper: qs2,
-    base32z: Gs2
-  });
-  var Ys2 = X({
-    prefix: "k",
-    name: "base36",
-    alphabet: "0123456789abcdefghijklmnopqrstuvwxyz"
-  });
-  var Js2 = X({
-    prefix: "K",
-    name: "base36upper",
-    alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-  });
-  var Ws2 = Object.freeze({
-    __proto__: null,
-    base36: Ys2,
-    base36upper: Js2
-  });
-  var Xs2 = X({
-    name: "base58btc",
-    prefix: "z",
-    alphabet: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
-  });
-  var Zs2 = X({
-    name: "base58flickr",
-    prefix: "Z",
-    alphabet: "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"
-  });
-  var Qs2 = Object.freeze({
-    __proto__: null,
-    base58btc: Xs2,
-    base58flickr: Zs2
-  });
-  var er2 = f3({
-    prefix: "m",
-    name: "base64",
-    alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
-    bitsPerChar: 6
-  });
-  var tr2 = f3({
-    prefix: "M",
-    name: "base64pad",
-    alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-    bitsPerChar: 6
-  });
-  var ir2 = f3({
-    prefix: "u",
-    name: "base64url",
-    alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_",
-    bitsPerChar: 6
-  });
-  var sr2 = f3({
-    prefix: "U",
-    name: "base64urlpad",
-    alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=",
-    bitsPerChar: 6
-  });
-  var rr2 = Object.freeze({
-    __proto__: null,
-    base64: er2,
-    base64pad: tr2,
-    base64url: ir2,
-    base64urlpad: sr2
-  });
+  var f3 = ({ name: o5, prefix: e2, bitsPerChar: t, alphabet: s4 }) => ne2({ prefix: e2, name: o5, encode(i5) {
+    return Cs2(i5, s4, t);
+  }, decode(i5) {
+    return Ts2(i5, s4, t, o5);
+  } });
+  var Ss2 = ne2({ prefix: "\0", name: "identity", encode: (o5) => _s2(o5), decode: (o5) => fs2(o5) });
+  var Ps2 = Object.freeze({ __proto__: null, identity: Ss2 });
+  var Rs2 = f3({ prefix: "0", name: "base2", alphabet: "01", bitsPerChar: 1 });
+  var xs2 = Object.freeze({ __proto__: null, base2: Rs2 });
+  var Os2 = f3({ prefix: "7", name: "base8", alphabet: "01234567", bitsPerChar: 3 });
+  var As2 = Object.freeze({ __proto__: null, base8: Os2 });
+  var Ns2 = X({ prefix: "9", name: "base10", alphabet: "0123456789" });
+  var Ls2 = Object.freeze({ __proto__: null, base10: Ns2 });
+  var zs2 = f3({ prefix: "f", name: "base16", alphabet: "0123456789abcdef", bitsPerChar: 4 });
+  var Ms2 = f3({ prefix: "F", name: "base16upper", alphabet: "0123456789ABCDEF", bitsPerChar: 4 });
+  var $s2 = Object.freeze({ __proto__: null, base16: zs2, base16upper: Ms2 });
+  var ks2 = f3({ prefix: "b", name: "base32", alphabet: "abcdefghijklmnopqrstuvwxyz234567", bitsPerChar: 5 });
+  var Fs2 = f3({ prefix: "B", name: "base32upper", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567", bitsPerChar: 5 });
+  var Us2 = f3({ prefix: "c", name: "base32pad", alphabet: "abcdefghijklmnopqrstuvwxyz234567=", bitsPerChar: 5 });
+  var Ks2 = f3({ prefix: "C", name: "base32padupper", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567=", bitsPerChar: 5 });
+  var Bs2 = f3({ prefix: "v", name: "base32hex", alphabet: "0123456789abcdefghijklmnopqrstuv", bitsPerChar: 5 });
+  var Vs2 = f3({ prefix: "V", name: "base32hexupper", alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUV", bitsPerChar: 5 });
+  var js2 = f3({ prefix: "t", name: "base32hexpad", alphabet: "0123456789abcdefghijklmnopqrstuv=", bitsPerChar: 5 });
+  var qs2 = f3({ prefix: "T", name: "base32hexpadupper", alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUV=", bitsPerChar: 5 });
+  var Gs2 = f3({ prefix: "h", name: "base32z", alphabet: "ybndrfg8ejkmcpqxot1uwisza345h769", bitsPerChar: 5 });
+  var Hs2 = Object.freeze({ __proto__: null, base32: ks2, base32upper: Fs2, base32pad: Us2, base32padupper: Ks2, base32hex: Bs2, base32hexupper: Vs2, base32hexpad: js2, base32hexpadupper: qs2, base32z: Gs2 });
+  var Ys2 = X({ prefix: "k", name: "base36", alphabet: "0123456789abcdefghijklmnopqrstuvwxyz" });
+  var Js2 = X({ prefix: "K", name: "base36upper", alphabet: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ" });
+  var Ws2 = Object.freeze({ __proto__: null, base36: Ys2, base36upper: Js2 });
+  var Xs2 = X({ name: "base58btc", prefix: "z", alphabet: "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz" });
+  var Zs2 = X({ name: "base58flickr", prefix: "Z", alphabet: "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ" });
+  var Qs2 = Object.freeze({ __proto__: null, base58btc: Xs2, base58flickr: Zs2 });
+  var er2 = f3({ prefix: "m", name: "base64", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", bitsPerChar: 6 });
+  var tr2 = f3({ prefix: "M", name: "base64pad", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", bitsPerChar: 6 });
+  var ir2 = f3({ prefix: "u", name: "base64url", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", bitsPerChar: 6 });
+  var sr2 = f3({ prefix: "U", name: "base64urlpad", alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_=", bitsPerChar: 6 });
+  var rr2 = Object.freeze({ __proto__: null, base64: er2, base64pad: tr2, base64url: ir2, base64urlpad: sr2 });
   var We2 = Array.from("\u{1F680}\u{1FA90}\u2604\u{1F6F0}\u{1F30C}\u{1F311}\u{1F312}\u{1F313}\u{1F314}\u{1F315}\u{1F316}\u{1F317}\u{1F318}\u{1F30D}\u{1F30F}\u{1F30E}\u{1F409}\u2600\u{1F4BB}\u{1F5A5}\u{1F4BE}\u{1F4BF}\u{1F602}\u2764\u{1F60D}\u{1F923}\u{1F60A}\u{1F64F}\u{1F495}\u{1F62D}\u{1F618}\u{1F44D}\u{1F605}\u{1F44F}\u{1F601}\u{1F525}\u{1F970}\u{1F494}\u{1F496}\u{1F499}\u{1F622}\u{1F914}\u{1F606}\u{1F644}\u{1F4AA}\u{1F609}\u263A\u{1F44C}\u{1F917}\u{1F49C}\u{1F614}\u{1F60E}\u{1F607}\u{1F339}\u{1F926}\u{1F389}\u{1F49E}\u270C\u2728\u{1F937}\u{1F631}\u{1F60C}\u{1F338}\u{1F64C}\u{1F60B}\u{1F497}\u{1F49A}\u{1F60F}\u{1F49B}\u{1F642}\u{1F493}\u{1F929}\u{1F604}\u{1F600}\u{1F5A4}\u{1F603}\u{1F4AF}\u{1F648}\u{1F447}\u{1F3B6}\u{1F612}\u{1F92D}\u2763\u{1F61C}\u{1F48B}\u{1F440}\u{1F62A}\u{1F611}\u{1F4A5}\u{1F64B}\u{1F61E}\u{1F629}\u{1F621}\u{1F92A}\u{1F44A}\u{1F973}\u{1F625}\u{1F924}\u{1F449}\u{1F483}\u{1F633}\u270B\u{1F61A}\u{1F61D}\u{1F634}\u{1F31F}\u{1F62C}\u{1F643}\u{1F340}\u{1F337}\u{1F63B}\u{1F613}\u2B50\u2705\u{1F97A}\u{1F308}\u{1F608}\u{1F918}\u{1F4A6}\u2714\u{1F623}\u{1F3C3}\u{1F490}\u2639\u{1F38A}\u{1F498}\u{1F620}\u261D\u{1F615}\u{1F33A}\u{1F382}\u{1F33B}\u{1F610}\u{1F595}\u{1F49D}\u{1F64A}\u{1F639}\u{1F5E3}\u{1F4AB}\u{1F480}\u{1F451}\u{1F3B5}\u{1F91E}\u{1F61B}\u{1F534}\u{1F624}\u{1F33C}\u{1F62B}\u26BD\u{1F919}\u2615\u{1F3C6}\u{1F92B}\u{1F448}\u{1F62E}\u{1F646}\u{1F37B}\u{1F343}\u{1F436}\u{1F481}\u{1F632}\u{1F33F}\u{1F9E1}\u{1F381}\u26A1\u{1F31E}\u{1F388}\u274C\u270A\u{1F44B}\u{1F630}\u{1F928}\u{1F636}\u{1F91D}\u{1F6B6}\u{1F4B0}\u{1F353}\u{1F4A2}\u{1F91F}\u{1F641}\u{1F6A8}\u{1F4A8}\u{1F92C}\u2708\u{1F380}\u{1F37A}\u{1F913}\u{1F619}\u{1F49F}\u{1F331}\u{1F616}\u{1F476}\u{1F974}\u25B6\u27A1\u2753\u{1F48E}\u{1F4B8}\u2B07\u{1F628}\u{1F31A}\u{1F98B}\u{1F637}\u{1F57A}\u26A0\u{1F645}\u{1F61F}\u{1F635}\u{1F44E}\u{1F932}\u{1F920}\u{1F927}\u{1F4CC}\u{1F535}\u{1F485}\u{1F9D0}\u{1F43E}\u{1F352}\u{1F617}\u{1F911}\u{1F30A}\u{1F92F}\u{1F437}\u260E\u{1F4A7}\u{1F62F}\u{1F486}\u{1F446}\u{1F3A4}\u{1F647}\u{1F351}\u2744\u{1F334}\u{1F4A3}\u{1F438}\u{1F48C}\u{1F4CD}\u{1F940}\u{1F922}\u{1F445}\u{1F4A1}\u{1F4A9}\u{1F450}\u{1F4F8}\u{1F47B}\u{1F910}\u{1F92E}\u{1F3BC}\u{1F975}\u{1F6A9}\u{1F34E}\u{1F34A}\u{1F47C}\u{1F48D}\u{1F4E3}\u{1F942}");
   var nr2 = We2.reduce((o5, e2, t) => (o5[t] = e2, o5), []);
   var or3 = We2.reduce((o5, e2, t) => (o5[e2.codePointAt(0)] = t, o5), []);
@@ -386211,16 +386013,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     return new Uint8Array(e2);
   }
-  var hr2 = ne2({
-    prefix: "\u{1F680}",
-    name: "base256emoji",
-    encode: ar2,
-    decode: cr2
-  });
-  var lr2 = Object.freeze({
-    __proto__: null,
-    base256emoji: hr2
-  });
+  var hr2 = ne2({ prefix: "\u{1F680}", name: "base256emoji", encode: ar2, decode: cr2 });
+  var lr2 = Object.freeze({ __proto__: null, base256emoji: hr2 });
   var ur2 = Ze2;
   var Xe2 = 128;
   var dr2 = 127;
@@ -386255,11 +386049,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var Cr2 = function(o5) {
     return o5 < mr2 ? 1 : o5 < br2 ? 2 : o5 < fr2 ? 3 : o5 < _r2 ? 4 : o5 < Er2 ? 5 : o5 < vr2 ? 6 : o5 < wr2 ? 7 : o5 < Ir2 ? 8 : o5 < Tr2 ? 9 : 10;
   };
-  var Sr2 = {
-    encode: ur2,
-    decode: yr2,
-    encodingLength: Cr2
-  };
+  var Sr2 = { encode: ur2, decode: yr2, encodingLength: Cr2 };
   var et = Sr2;
   var tt = (o5, e2, t = 0) => (et.encode(o5, e2, t), e2);
   var it = (o5) => et.encodingLength(o5);
@@ -386272,11 +386062,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       this.code = e2, this.size = t, this.digest = s4, this.bytes = i5;
     }
   };
-  var st = ({
-    name: o5,
-    code: e2,
-    encode: t
-  }) => new Rr2(o5, e2, t);
+  var st = ({ name: o5, code: e2, encode: t }) => new Rr2(o5, e2, t);
   var Rr2 = class {
     constructor(e2, t, s4) {
       this.name = e2, this.code = t, this.encode = s4;
@@ -386289,68 +386075,23 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
   };
   var rt = (o5) => async (e2) => new Uint8Array(await crypto.subtle.digest(o5, e2));
-  var xr2 = st({
-    name: "sha2-256",
-    code: 18,
-    encode: rt("SHA-256")
-  });
-  var Or2 = st({
-    name: "sha2-512",
-    code: 19,
-    encode: rt("SHA-512")
-  });
-  var Ar2 = Object.freeze({
-    __proto__: null,
-    sha256: xr2,
-    sha512: Or2
-  });
+  var xr2 = st({ name: "sha2-256", code: 18, encode: rt("SHA-256") });
+  var Or2 = st({ name: "sha2-512", code: 19, encode: rt("SHA-512") });
+  var Ar2 = Object.freeze({ __proto__: null, sha256: xr2, sha512: Or2 });
   var nt = 0;
   var Nr2 = "identity";
   var ot = Ye;
   var Lr2 = (o5) => fe2(nt, ot(o5));
-  var zr2 = {
-    code: nt,
-    name: Nr2,
-    encode: ot,
-    digest: Lr2
-  };
-  var Mr2 = Object.freeze({
-    __proto__: null,
-    identity: zr2
-  });
+  var zr2 = { code: nt, name: Nr2, encode: ot, digest: Lr2 };
+  var Mr2 = Object.freeze({ __proto__: null, identity: zr2 });
   new TextEncoder(), new TextDecoder();
-  var at = {
-    ...Ps2,
-    ...xs2,
-    ...As2,
-    ...Ls2,
-    ...$s2,
-    ...Hs2,
-    ...Ws2,
-    ...Qs2,
-    ...rr2,
-    ...lr2
-  };
-  ({
-    ...Ar2,
-    ...Mr2
-  });
+  var at = { ...Ps2, ...xs2, ...As2, ...Ls2, ...$s2, ...Hs2, ...Ws2, ...Qs2, ...rr2, ...lr2 };
+  ({ ...Ar2, ...Mr2 });
   function $r(o5 = 0) {
     return globalThis.Buffer != null && globalThis.Buffer.allocUnsafe != null ? globalThis.Buffer.allocUnsafe(o5) : new Uint8Array(o5);
   }
   function ct(o5, e2, t, s4) {
-    return {
-      name: o5,
-      prefix: e2,
-      encoder: {
-        name: o5,
-        prefix: e2,
-        encode: t
-      },
-      decoder: {
-        decode: s4
-      }
-    };
+    return { name: o5, prefix: e2, encoder: { name: o5, prefix: e2, encode: t }, decoder: { decode: s4 } };
   }
   var ht = ct("utf8", "u", (o5) => "u" + new TextDecoder("utf8").decode(o5), (o5) => new TextEncoder().encode(o5.substring(1)));
   var _e2 = ct("ascii", "a", (o5) => {
@@ -386363,15 +386104,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     for (let t = 0; t < o5.length; t++) e2[t] = o5.charCodeAt(t);
     return e2;
   });
-  var kr2 = {
-    utf8: ht,
-    "utf-8": ht,
-    hex: at.base16,
-    latin1: _e2,
-    ascii: _e2,
-    binary: _e2,
-    ...at
-  };
+  var kr2 = { utf8: ht, "utf-8": ht, hex: at.base16, latin1: _e2, ascii: _e2, binary: _e2, ...at };
   function Fr2(o5, e2 = "utf8") {
     const t = kr2[e2];
     if (!t) throw new Error(`Unsupported encoding "${e2}"`);
@@ -386381,13 +386114,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var ve2 = 2;
   var oe2 = "core";
   var O4 = `${Ee}@2:${oe2}:`;
-  var lt = {
-    name: oe2,
-    logger: "error"
-  };
-  var ut = {
-    database: ":memory:"
-  };
+  var lt = { name: oe2, logger: "error" };
+  var ut = { database: ":memory:" };
   var dt = "crypto";
   var we2 = "client_ed25519_seed";
   var gt = import_time4.ONE_DAY;
@@ -386401,104 +386129,28 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var Et = "error";
   var Ie = "wss://relay.walletconnect.org";
   var vt = "relayer";
-  var w4 = {
-    message: "relayer_message",
-    message_ack: "relayer_message_ack",
-    connect: "relayer_connect",
-    disconnect: "relayer_disconnect",
-    error: "relayer_error",
-    connection_stalled: "relayer_connection_stalled",
-    transport_closed: "relayer_transport_closed",
-    publish: "relayer_publish"
-  };
+  var w4 = { message: "relayer_message", message_ack: "relayer_message_ack", connect: "relayer_connect", disconnect: "relayer_disconnect", error: "relayer_error", connection_stalled: "relayer_connection_stalled", transport_closed: "relayer_transport_closed", publish: "relayer_publish" };
   var wt = "_subscription";
-  var T2 = {
-    payload: "payload",
-    connect: "connect",
-    disconnect: "disconnect",
-    error: "error"
-  };
+  var T2 = { payload: "payload", connect: "connect", disconnect: "disconnect", error: "error" };
   var It = 0.1;
   var Te = "2.16.1";
-  var F = {
-    link_mode: "link_mode",
-    relay: "relay"
-  };
+  var F = { link_mode: "link_mode", relay: "relay" };
   var Tt2 = "0.3";
   var Ct = "WALLETCONNECT_CLIENT_ID";
   var Ce2 = "WALLETCONNECT_LINK_MODE_APPS";
-  var A3 = {
-    created: "subscription_created",
-    deleted: "subscription_deleted",
-    expired: "subscription_expired",
-    disabled: "subscription_disabled",
-    sync: "subscription_sync",
-    resubscribed: "subscription_resubscribed"
-  };
+  var A3 = { created: "subscription_created", deleted: "subscription_deleted", expired: "subscription_expired", disabled: "subscription_disabled", sync: "subscription_sync", resubscribed: "subscription_resubscribed" };
   var St = "subscription";
   var Pt = "0.3";
   var Rt = import_time4.FIVE_SECONDS * 1e3;
   var xt = "pairing";
   var Ot2 = "0.3";
-  var j3 = {
-    wc_pairingDelete: {
-      req: {
-        ttl: import_time4.ONE_DAY,
-        prompt: false,
-        tag: 1e3
-      },
-      res: {
-        ttl: import_time4.ONE_DAY,
-        prompt: false,
-        tag: 1001
-      }
-    },
-    wc_pairingPing: {
-      req: {
-        ttl: import_time4.THIRTY_SECONDS,
-        prompt: false,
-        tag: 1002
-      },
-      res: {
-        ttl: import_time4.THIRTY_SECONDS,
-        prompt: false,
-        tag: 1003
-      }
-    },
-    unregistered_method: {
-      req: {
-        ttl: import_time4.ONE_DAY,
-        prompt: false,
-        tag: 0
-      },
-      res: {
-        ttl: import_time4.ONE_DAY,
-        prompt: false,
-        tag: 0
-      }
-    }
-  };
-  var Z2 = {
-    create: "pairing_create",
-    expire: "pairing_expire",
-    delete: "pairing_delete",
-    ping: "pairing_ping"
-  };
-  var P = {
-    created: "history_created",
-    updated: "history_updated",
-    deleted: "history_deleted",
-    sync: "history_sync"
-  };
+  var j3 = { wc_pairingDelete: { req: { ttl: import_time4.ONE_DAY, prompt: false, tag: 1e3 }, res: { ttl: import_time4.ONE_DAY, prompt: false, tag: 1001 } }, wc_pairingPing: { req: { ttl: import_time4.THIRTY_SECONDS, prompt: false, tag: 1002 }, res: { ttl: import_time4.THIRTY_SECONDS, prompt: false, tag: 1003 } }, unregistered_method: { req: { ttl: import_time4.ONE_DAY, prompt: false, tag: 0 }, res: { ttl: import_time4.ONE_DAY, prompt: false, tag: 0 } } };
+  var Z2 = { create: "pairing_create", expire: "pairing_expire", delete: "pairing_delete", ping: "pairing_ping" };
+  var P = { created: "history_created", updated: "history_updated", deleted: "history_deleted", sync: "history_sync" };
   var At = "history";
   var Nt = "0.3";
   var Lt2 = "expirer";
-  var R3 = {
-    created: "expirer_created",
-    deleted: "expirer_deleted",
-    expired: "expirer_expired",
-    sync: "expirer_sync"
-  };
+  var R3 = { created: "expirer_created", deleted: "expirer_deleted", expired: "expirer_expired", sync: "expirer_sync" };
   var zt2 = "0.3";
   var Mt = "verify-api";
   var qr2 = "https://verify.walletconnect.com";
@@ -386508,77 +386160,12 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var Ft2 = [qr2, $t2];
   var Ut2 = "echo";
   var Kt2 = "https://echo.walletconnect.com";
-  var z5 = {
-    pairing_started: "pairing_started",
-    pairing_uri_validation_success: "pairing_uri_validation_success",
-    pairing_uri_not_expired: "pairing_uri_not_expired",
-    store_new_pairing: "store_new_pairing",
-    subscribing_pairing_topic: "subscribing_pairing_topic",
-    subscribe_pairing_topic_success: "subscribe_pairing_topic_success",
-    existing_pairing: "existing_pairing",
-    pairing_not_expired: "pairing_not_expired",
-    emit_inactive_pairing: "emit_inactive_pairing",
-    emit_session_proposal: "emit_session_proposal",
-    subscribing_to_pairing_topic: "subscribing_to_pairing_topic"
-  };
-  var $3 = {
-    no_wss_connection: "no_wss_connection",
-    no_internet_connection: "no_internet_connection",
-    malformed_pairing_uri: "malformed_pairing_uri",
-    active_pairing_already_exists: "active_pairing_already_exists",
-    subscribe_pairing_topic_failure: "subscribe_pairing_topic_failure",
-    pairing_expired: "pairing_expired",
-    proposal_expired: "proposal_expired",
-    proposal_listener_not_found: "proposal_listener_not_found"
-  };
-  var Hr2 = {
-    session_approve_started: "session_approve_started",
-    proposal_not_expired: "proposal_not_expired",
-    session_namespaces_validation_success: "session_namespaces_validation_success",
-    create_session_topic: "create_session_topic",
-    subscribing_session_topic: "subscribing_session_topic",
-    subscribe_session_topic_success: "subscribe_session_topic_success",
-    publishing_session_approve: "publishing_session_approve",
-    session_approve_publish_success: "session_approve_publish_success",
-    store_session: "store_session",
-    publishing_session_settle: "publishing_session_settle",
-    session_settle_publish_success: "session_settle_publish_success"
-  };
-  var Yr2 = {
-    no_internet_connection: "no_internet_connection",
-    no_wss_connection: "no_wss_connection",
-    proposal_expired: "proposal_expired",
-    subscribe_session_topic_failure: "subscribe_session_topic_failure",
-    session_approve_publish_failure: "session_approve_publish_failure",
-    session_settle_publish_failure: "session_settle_publish_failure",
-    session_approve_namespace_validation_failure: "session_approve_namespace_validation_failure",
-    proposal_not_found: "proposal_not_found"
-  };
-  var Jr2 = {
-    authenticated_session_approve_started: "authenticated_session_approve_started",
-    authenticated_session_not_expired: "authenticated_session_not_expired",
-    chains_caip2_compliant: "chains_caip2_compliant",
-    chains_evm_compliant: "chains_evm_compliant",
-    create_authenticated_session_topic: "create_authenticated_session_topic",
-    cacaos_verified: "cacaos_verified",
-    store_authenticated_session: "store_authenticated_session",
-    subscribing_authenticated_session_topic: "subscribing_authenticated_session_topic",
-    subscribe_authenticated_session_topic_success: "subscribe_authenticated_session_topic_success",
-    publishing_authenticated_session_approve: "publishing_authenticated_session_approve",
-    authenticated_session_approve_publish_success: "authenticated_session_approve_publish_success"
-  };
-  var Wr2 = {
-    no_internet_connection: "no_internet_connection",
-    no_wss_connection: "no_wss_connection",
-    missing_session_authenticate_request: "missing_session_authenticate_request",
-    session_authenticate_request_expired: "session_authenticate_request_expired",
-    chains_caip2_compliant_failure: "chains_caip2_compliant_failure",
-    chains_evm_compliant_failure: "chains_evm_compliant_failure",
-    invalid_cacao: "invalid_cacao",
-    subscribe_authenticated_session_topic_failure: "subscribe_authenticated_session_topic_failure",
-    authenticated_session_approve_publish_failure: "authenticated_session_approve_publish_failure",
-    authenticated_session_pending_request_not_found: "authenticated_session_pending_request_not_found"
-  };
+  var z5 = { pairing_started: "pairing_started", pairing_uri_validation_success: "pairing_uri_validation_success", pairing_uri_not_expired: "pairing_uri_not_expired", store_new_pairing: "store_new_pairing", subscribing_pairing_topic: "subscribing_pairing_topic", subscribe_pairing_topic_success: "subscribe_pairing_topic_success", existing_pairing: "existing_pairing", pairing_not_expired: "pairing_not_expired", emit_inactive_pairing: "emit_inactive_pairing", emit_session_proposal: "emit_session_proposal", subscribing_to_pairing_topic: "subscribing_to_pairing_topic" };
+  var $3 = { no_wss_connection: "no_wss_connection", no_internet_connection: "no_internet_connection", malformed_pairing_uri: "malformed_pairing_uri", active_pairing_already_exists: "active_pairing_already_exists", subscribe_pairing_topic_failure: "subscribe_pairing_topic_failure", pairing_expired: "pairing_expired", proposal_expired: "proposal_expired", proposal_listener_not_found: "proposal_listener_not_found" };
+  var Hr2 = { session_approve_started: "session_approve_started", proposal_not_expired: "proposal_not_expired", session_namespaces_validation_success: "session_namespaces_validation_success", create_session_topic: "create_session_topic", subscribing_session_topic: "subscribing_session_topic", subscribe_session_topic_success: "subscribe_session_topic_success", publishing_session_approve: "publishing_session_approve", session_approve_publish_success: "session_approve_publish_success", store_session: "store_session", publishing_session_settle: "publishing_session_settle", session_settle_publish_success: "session_settle_publish_success" };
+  var Yr2 = { no_internet_connection: "no_internet_connection", no_wss_connection: "no_wss_connection", proposal_expired: "proposal_expired", subscribe_session_topic_failure: "subscribe_session_topic_failure", session_approve_publish_failure: "session_approve_publish_failure", session_settle_publish_failure: "session_settle_publish_failure", session_approve_namespace_validation_failure: "session_approve_namespace_validation_failure", proposal_not_found: "proposal_not_found" };
+  var Jr2 = { authenticated_session_approve_started: "authenticated_session_approve_started", authenticated_session_not_expired: "authenticated_session_not_expired", chains_caip2_compliant: "chains_caip2_compliant", chains_evm_compliant: "chains_evm_compliant", create_authenticated_session_topic: "create_authenticated_session_topic", cacaos_verified: "cacaos_verified", store_authenticated_session: "store_authenticated_session", subscribing_authenticated_session_topic: "subscribing_authenticated_session_topic", subscribe_authenticated_session_topic_success: "subscribe_authenticated_session_topic_success", publishing_authenticated_session_approve: "publishing_authenticated_session_approve", authenticated_session_approve_publish_success: "authenticated_session_approve_publish_success" };
+  var Wr2 = { no_internet_connection: "no_internet_connection", no_wss_connection: "no_wss_connection", missing_session_authenticate_request: "missing_session_authenticate_request", session_authenticate_request_expired: "session_authenticate_request_expired", chains_caip2_compliant_failure: "chains_caip2_compliant_failure", chains_evm_compliant_failure: "chains_evm_compliant_failure", invalid_cacao: "invalid_cacao", subscribe_authenticated_session_topic_failure: "subscribe_authenticated_session_topic_failure", authenticated_session_approve_publish_failure: "authenticated_session_approve_publish_failure", authenticated_session_pending_request_not_found: "authenticated_session_pending_request_not_found" };
   var Bt = 0.1;
   var Vt = "event-client";
   var jt2 = 86400;
@@ -386596,9 +386183,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         this.isInitialized();
         const i5 = this.keychain.get(s4);
         if (typeof i5 > "u") {
-          const {
-            message: r3
-          } = xe("NO_MATCHING_KEY", `${this.name}: ${s4}`);
+          const { message: r3 } = xe("NO_MATCHING_KEY", `${this.name}: ${s4}`);
           throw new Error(r3);
         }
         return i5;
@@ -386624,9 +386209,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
@@ -386667,17 +386250,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
           const m3 = a4.senderPublicKey, b5 = a4.receiverPublicKey;
           i5 = await this.generateSharedKey(m3, b5);
         }
-        const h5 = this.getSymKey(i5), {
-          type: d3,
-          senderPublicKey: g3
-        } = a4;
-        return _u({
-          type: d3,
-          symKey: h5,
-          message: c6,
-          senderPublicKey: g3,
-          encoding: n5?.encoding
-        });
+        const h5 = this.getSymKey(i5), { type: d3, senderPublicKey: g3 } = a4;
+        return _u({ type: d3, symKey: h5, message: c6, senderPublicKey: g3, encoding: n5?.encoding });
       }, this.decode = async (i5, r3, n5) => {
         this.isInitialized();
         const a4 = Ou(r3, n5);
@@ -386690,26 +386264,16 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
           i5 = await this.generateSharedKey(c6, h5);
         }
         try {
-          const c6 = this.getSymKey(i5), h5 = Cu({
-            symKey: c6,
-            encoded: r3,
-            encoding: n5?.encoding
-          });
+          const c6 = this.getSymKey(i5), h5 = Cu({ symKey: c6, encoded: r3, encoding: n5?.encoding });
           return safeJsonParse(h5);
         } catch (c6) {
           this.logger.error(`Failed to decode message from topic: '${i5}', clientId: '${await this.getClientId()}'`), this.logger.error(c6);
         }
       }, this.getPayloadType = (i5, r3 = $i) => {
-        const n5 = Wr({
-          encoded: i5,
-          encoding: r3
-        });
+        const n5 = Wr({ encoded: i5, encoding: r3 });
         return $e(n5.type);
       }, this.getPayloadSenderPublicKey = (i5, r3 = $i) => {
-        const n5 = Wr({
-          encoded: i5,
-          encoding: r3
-        });
+        const n5 = Wr({ encoded: i5, encoding: r3 });
         return n5.senderPublicKey ? toString4(n5.senderPublicKey, Lt) : void 0;
       }, this.core = e2, this.logger = E3(t, this.name), this.keychain = s4 || new Gt2(this.core, this.logger);
     }
@@ -386736,9 +386300,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
@@ -386750,11 +386312,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
           this.logger.trace("Initialized");
           try {
             const s4 = await this.getRelayerMessages();
-            typeof s4 < "u" && (this.messages = s4), this.logger.debug(`Successfully Restored records for ${this.name}`), this.logger.trace({
-              type: "method",
-              method: "restore",
-              size: this.messages.size
-            });
+            typeof s4 < "u" && (this.messages = s4), this.logger.debug(`Successfully Restored records for ${this.name}`), this.logger.trace({ type: "method", method: "restore", size: this.messages.size });
           } catch (s4) {
             this.logger.debug(`Failed to Restore records for ${this.name}`), this.logger.error(s4);
           } finally {
@@ -386796,9 +386354,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
@@ -386807,46 +386363,15 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     constructor(e2, t) {
       super(e2, t), this.relayer = e2, this.logger = t, this.events = new import_events9.EventEmitter(), this.name = ft, this.queue = /* @__PURE__ */ new Map(), this.publishTimeout = (0, import_time4.toMiliseconds)(import_time4.ONE_MINUTE), this.failedPublishTimeout = (0, import_time4.toMiliseconds)(import_time4.ONE_SECOND), this.needsTransportRestart = false, this.publish = async (s4, i5, r3) => {
         var n5;
-        this.logger.debug("Publishing Payload"), this.logger.trace({
-          type: "method",
-          method: "publish",
-          params: {
-            topic: s4,
-            message: i5,
-            opts: r3
-          }
-        });
-        const a4 = r3?.ttl || bt, c6 = ku(r3), h5 = r3?.prompt || false, d3 = r3?.tag || 0, g3 = r3?.id || getBigIntRpcId().toString(), m3 = {
-          topic: s4,
-          message: i5,
-          opts: {
-            ttl: a4,
-            relay: c6,
-            prompt: h5,
-            tag: d3,
-            id: g3,
-            attestation: r3?.attestation
-          }
-        }, b5 = `Failed to publish payload, please try again. id:${g3} tag:${d3}`, l5 = Date.now();
+        this.logger.debug("Publishing Payload"), this.logger.trace({ type: "method", method: "publish", params: { topic: s4, message: i5, opts: r3 } });
+        const a4 = r3?.ttl || bt, c6 = ku(r3), h5 = r3?.prompt || false, d3 = r3?.tag || 0, g3 = r3?.id || getBigIntRpcId().toString(), m3 = { topic: s4, message: i5, opts: { ttl: a4, relay: c6, prompt: h5, tag: d3, id: g3, attestation: r3?.attestation } }, b5 = `Failed to publish payload, please try again. id:${g3} tag:${d3}`, l5 = Date.now();
         let p4, _4 = 1;
         try {
           for (; p4 === void 0; ) {
             if (Date.now() - l5 > this.publishTimeout) throw new Error(b5);
-            this.logger.trace({
-              id: g3,
-              attempts: _4
-            }, `publisher.publish - attempt ${_4}`), p4 = await await ds(this.rpcPublish(s4, i5, a4, c6, h5, d3, g3, r3?.attestation).catch((D3) => this.logger.warn(D3)), this.publishTimeout, b5), _4++, p4 || await new Promise((D3) => setTimeout(D3, this.failedPublishTimeout));
+            this.logger.trace({ id: g3, attempts: _4 }, `publisher.publish - attempt ${_4}`), p4 = await await ds(this.rpcPublish(s4, i5, a4, c6, h5, d3, g3, r3?.attestation).catch((D3) => this.logger.warn(D3)), this.publishTimeout, b5), _4++, p4 || await new Promise((D3) => setTimeout(D3, this.failedPublishTimeout));
           }
-          this.relayer.events.emit(w4.publish, m3), this.logger.debug("Successfully Published Payload"), this.logger.trace({
-            type: "method",
-            method: "publish",
-            params: {
-              id: g3,
-              topic: s4,
-              message: i5,
-              opts: r3
-            }
-          });
+          this.relayer.events.emit(w4.publish, m3), this.logger.debug("Successfully Published Payload"), this.logger.trace({ type: "method", method: "publish", params: { id: g3, topic: s4, message: i5, opts: r3 } });
         } catch (D3) {
           if (this.logger.debug("Failed to Publish Payload"), this.logger.error(D3), (n5 = r3?.internal) != null && n5.throwOnFailedPublish) throw D3;
           this.queue.set(g3, m3);
@@ -386866,34 +386391,15 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     rpcPublish(e2, t, s4, i5, r3, n5, a4, c6) {
       var h5, d3, g3, m3;
-      const b5 = {
-        method: qu(i5.protocol).publish,
-        params: {
-          topic: e2,
-          message: t,
-          ttl: s4,
-          prompt: r3,
-          tag: n5,
-          attestation: c6
-        },
-        id: a4
-      };
-      return Pe((h5 = b5.params) == null ? void 0 : h5.prompt) && ((d3 = b5.params) == null || delete d3.prompt), Pe((g3 = b5.params) == null ? void 0 : g3.tag) && ((m3 = b5.params) == null || delete m3.tag), this.logger.debug("Outgoing Relay Payload"), this.logger.trace({
-        type: "message",
-        direction: "outgoing",
-        request: b5
-      }), this.relayer.request(b5);
+      const b5 = { method: qu(i5.protocol).publish, params: { topic: e2, message: t, ttl: s4, prompt: r3, tag: n5, attestation: c6 }, id: a4 };
+      return Pe((h5 = b5.params) == null ? void 0 : h5.prompt) && ((d3 = b5.params) == null || delete d3.prompt), Pe((g3 = b5.params) == null ? void 0 : g3.tag) && ((m3 = b5.params) == null || delete m3.tag), this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "message", direction: "outgoing", request: b5 }), this.relayer.request(b5);
     }
     removeRequestFromQueue(e2) {
       this.queue.delete(e2);
     }
     checkQueue() {
       this.queue.forEach(async (e2) => {
-        const {
-          topic: t,
-          message: s4,
-          opts: i5
-        } = e2;
+        const { topic: t, message: s4, opts: i5 } = e2;
         await this.publish(t, s4, i5);
       });
     }
@@ -386942,16 +386448,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var Jt2 = Object.getOwnPropertySymbols;
   var sn2 = Object.prototype.hasOwnProperty;
   var rn2 = Object.prototype.propertyIsEnumerable;
-  var Wt = (o5, e2, t) => e2 in o5 ? Qr2(o5, e2, {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: t
-  }) : o5[e2] = t;
+  var Wt = (o5, e2, t) => e2 in o5 ? Qr2(o5, e2, { enumerable: true, configurable: true, writable: true, value: t }) : o5[e2] = t;
   var ee2 = (o5, e2) => {
     for (var t in e2 || (e2 = {})) sn2.call(e2, t) && Wt(o5, t, e2[t]);
-    if (Jt2)
-      for (var t of Jt2(e2)) rn2.call(e2, t) && Wt(o5, t, e2[t]);
+    if (Jt2) for (var t of Jt2(e2)) rn2.call(e2, t) && Wt(o5, t, e2[t]);
     return o5;
   };
   var Se = (o5, e2) => en2(o5, tn2(e2));
@@ -386960,30 +386460,12 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       super(e2, t), this.relayer = e2, this.logger = t, this.subscriptions = /* @__PURE__ */ new Map(), this.topicMap = new Zr2(), this.events = new import_events9.EventEmitter(), this.name = St, this.version = Pt, this.pending = /* @__PURE__ */ new Map(), this.cached = [], this.initialized = false, this.pendingSubscriptionWatchLabel = "pending_sub_watch_label", this.pollingInterval = 20, this.storagePrefix = O4, this.subscribeTimeout = (0, import_time4.toMiliseconds)(import_time4.ONE_MINUTE), this.restartInProgress = false, this.batchSubscribeTopicsLimit = 500, this.pendingBatchMessages = [], this.init = async () => {
         this.initialized || (this.logger.trace("Initialized"), this.registerEventListeners(), this.clientId = await this.relayer.core.crypto.getClientId(), await this.restore()), this.initialized = true;
       }, this.subscribe = async (s4, i5) => {
-        this.isInitialized(), this.logger.debug("Subscribing Topic"), this.logger.trace({
-          type: "method",
-          method: "subscribe",
-          params: {
-            topic: s4,
-            opts: i5
-          }
-        });
+        this.isInitialized(), this.logger.debug("Subscribing Topic"), this.logger.trace({ type: "method", method: "subscribe", params: { topic: s4, opts: i5 } });
         try {
-          const r3 = ku(i5), n5 = {
-            topic: s4,
-            relay: r3,
-            transportType: i5?.transportType
-          };
+          const r3 = ku(i5), n5 = { topic: s4, relay: r3, transportType: i5?.transportType };
           this.pending.set(s4, n5);
           const a4 = await this.rpcSubscribe(s4, r3, i5?.transportType);
-          return typeof a4 == "string" && (this.onSubscribe(a4, n5), this.logger.debug("Successfully Subscribed Topic"), this.logger.trace({
-            type: "method",
-            method: "subscribe",
-            params: {
-              topic: s4,
-              opts: i5
-            }
-          })), a4;
+          return typeof a4 == "string" && (this.onSubscribe(a4, n5), this.logger.debug("Successfully Subscribed Topic"), this.logger.trace({ type: "method", method: "subscribe", params: { topic: s4, opts: i5 } })), a4;
         } catch (r3) {
           throw this.logger.debug("Failed to Subscribe Topic"), this.logger.error(r3), r3;
         }
@@ -387052,45 +386534,20 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       await Promise.all(s4.map(async (i5) => await this.unsubscribeById(e2, i5, t)));
     }
     async unsubscribeById(e2, t, s4) {
-      this.logger.debug("Unsubscribing Topic"), this.logger.trace({
-        type: "method",
-        method: "unsubscribe",
-        params: {
-          topic: e2,
-          id: t,
-          opts: s4
-        }
-      });
+      this.logger.debug("Unsubscribing Topic"), this.logger.trace({ type: "method", method: "unsubscribe", params: { topic: e2, id: t, opts: s4 } });
       try {
         const i5 = ku(s4);
         await this.rpcUnsubscribe(e2, t, i5);
         const r3 = er("USER_DISCONNECTED", `${this.name}, ${e2}`);
-        await this.onUnsubscribe(e2, t, r3), this.logger.debug("Successfully Unsubscribed Topic"), this.logger.trace({
-          type: "method",
-          method: "unsubscribe",
-          params: {
-            topic: e2,
-            id: t,
-            opts: s4
-          }
-        });
+        await this.onUnsubscribe(e2, t, r3), this.logger.debug("Successfully Unsubscribed Topic"), this.logger.trace({ type: "method", method: "unsubscribe", params: { topic: e2, id: t, opts: s4 } });
       } catch (i5) {
         throw this.logger.debug("Failed to Unsubscribe Topic"), this.logger.error(i5), i5;
       }
     }
     async rpcSubscribe(e2, t, s4 = F.relay) {
       s4 === F.relay && await this.restartToComplete();
-      const i5 = {
-        method: qu(t.protocol).subscribe,
-        params: {
-          topic: e2
-        }
-      };
-      this.logger.debug("Outgoing Relay Payload"), this.logger.trace({
-        type: "payload",
-        direction: "outgoing",
-        request: i5
-      });
+      const i5 = { method: qu(t.protocol).subscribe, params: { topic: e2 } };
+      this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "payload", direction: "outgoing", request: i5 });
       try {
         const r3 = Iu(e2 + this.clientId);
         return s4 === F.link_mode ? (setTimeout(() => {
@@ -387103,17 +386560,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     async rpcBatchSubscribe(e2) {
       if (!e2.length) return;
-      const t = e2[0].relay, s4 = {
-        method: qu(t.protocol).batchSubscribe,
-        params: {
-          topics: e2.map((i5) => i5.topic)
-        }
-      };
-      this.logger.debug("Outgoing Relay Payload"), this.logger.trace({
-        type: "payload",
-        direction: "outgoing",
-        request: s4
-      });
+      const t = e2[0].relay, s4 = { method: qu(t.protocol).batchSubscribe, params: { topics: e2.map((i5) => i5.topic) } };
+      this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "payload", direction: "outgoing", request: s4 });
       try {
         return await await ds(this.relayer.request(s4).catch((i5) => this.logger.warn(i5)), this.subscribeTimeout);
       } catch {
@@ -387122,17 +386570,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     async rpcBatchFetchMessages(e2) {
       if (!e2.length) return;
-      const t = e2[0].relay, s4 = {
-        method: qu(t.protocol).batchFetchMessages,
-        params: {
-          topics: e2.map((r3) => r3.topic)
-        }
-      };
-      this.logger.debug("Outgoing Relay Payload"), this.logger.trace({
-        type: "payload",
-        direction: "outgoing",
-        request: s4
-      });
+      const t = e2[0].relay, s4 = { method: qu(t.protocol).batchFetchMessages, params: { topics: e2.map((r3) => r3.topic) } };
+      this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "payload", direction: "outgoing", request: s4 });
       let i5;
       try {
         i5 = await await ds(this.relayer.request(s4).catch((r3) => this.logger.warn(r3)), this.subscribeTimeout);
@@ -387142,23 +386581,11 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       return i5;
     }
     rpcUnsubscribe(e2, t, s4) {
-      const i5 = {
-        method: qu(s4.protocol).unsubscribe,
-        params: {
-          topic: e2,
-          id: t
-        }
-      };
-      return this.logger.debug("Outgoing Relay Payload"), this.logger.trace({
-        type: "payload",
-        direction: "outgoing",
-        request: i5
-      }), this.relayer.request(i5);
+      const i5 = { method: qu(s4.protocol).unsubscribe, params: { topic: e2, id: t } };
+      return this.logger.debug("Outgoing Relay Payload"), this.logger.trace({ type: "payload", direction: "outgoing", request: i5 }), this.relayer.request(i5);
     }
     onSubscribe(e2, t) {
-      this.setSubscription(e2, Se(ee2({}, t), {
-        id: e2
-      })), this.pending.delete(t.topic);
+      this.setSubscription(e2, Se(ee2({}, t), { id: e2 })), this.pending.delete(t.topic);
     }
     onBatchSubscribe(e2) {
       e2.length && e2.forEach((t) => {
@@ -387175,42 +386602,24 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       return await this.relayer.core.storage.getItem(this.storageKey);
     }
     setSubscription(e2, t) {
-      this.logger.debug("Setting subscription"), this.logger.trace({
-        type: "method",
-        method: "setSubscription",
-        id: e2,
-        subscription: t
-      }), this.addSubscription(e2, t);
+      this.logger.debug("Setting subscription"), this.logger.trace({ type: "method", method: "setSubscription", id: e2, subscription: t }), this.addSubscription(e2, t);
     }
     addSubscription(e2, t) {
       this.subscriptions.set(e2, ee2({}, t)), this.topicMap.set(t.topic, e2), this.events.emit(A3.created, t);
     }
     getSubscription(e2) {
-      this.logger.debug("Getting subscription"), this.logger.trace({
-        type: "method",
-        method: "getSubscription",
-        id: e2
-      });
+      this.logger.debug("Getting subscription"), this.logger.trace({ type: "method", method: "getSubscription", id: e2 });
       const t = this.subscriptions.get(e2);
       if (!t) {
-        const {
-          message: s4
-        } = xe("NO_MATCHING_KEY", `${this.name}: ${e2}`);
+        const { message: s4 } = xe("NO_MATCHING_KEY", `${this.name}: ${e2}`);
         throw new Error(s4);
       }
       return t;
     }
     deleteSubscription(e2, t) {
-      this.logger.debug("Deleting subscription"), this.logger.trace({
-        type: "method",
-        method: "deleteSubscription",
-        id: e2,
-        reason: t
-      });
+      this.logger.debug("Deleting subscription"), this.logger.trace({ type: "method", method: "deleteSubscription", id: e2, reason: t });
       const s4 = this.getSubscription(e2);
-      this.subscriptions.delete(e2), this.topicMap.delete(s4.topic, e2), this.events.emit(A3.deleted, Se(ee2({}, s4), {
-        reason: t
-      }));
+      this.subscriptions.delete(e2), this.topicMap.delete(s4.topic, e2), this.events.emit(A3.deleted, Se(ee2({}, s4), { reason: t }));
     }
     async persist() {
       await this.setRelayerSubscriptions(this.values), this.events.emit(A3.sync);
@@ -387230,16 +386639,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         const e2 = await this.getRelayerSubscriptions();
         if (typeof e2 > "u" || !e2.length) return;
         if (this.subscriptions.size) {
-          const {
-            message: t
-          } = xe("RESTORE_WILL_OVERRIDE", this.name);
+          const { message: t } = xe("RESTORE_WILL_OVERRIDE", this.name);
           throw this.logger.error(t), this.logger.error(`${this.name}: ${JSON.stringify(this.values)}`), new Error(t);
         }
-        this.cached = e2, this.logger.debug(`Successfully Restored subscriptions for ${this.name}`), this.logger.trace({
-          type: "method",
-          method: "restore",
-          subscriptions: this.values
-        });
+        this.cached = e2, this.logger.debug(`Successfully Restored subscriptions for ${this.name}`), this.logger.trace({ type: "method", method: "restore", subscriptions: this.values });
       } catch (e2) {
         this.logger.debug(`Failed to Restore subscriptions for ${this.name}`), this.logger.error(e2);
       }
@@ -387247,9 +386650,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     async batchSubscribe(e2) {
       if (!e2.length) return;
       const t = await this.rpcBatchSubscribe(e2);
-      Ir(t) && this.onBatchSubscribe(t.map((s4, i5) => Se(ee2({}, e2[i5]), {
-        id: s4
-      })));
+      Ir(t) && this.onBatchSubscribe(t.map((s4, i5) => Se(ee2({}, e2[i5]), { id: s4 })));
     }
     async batchFetchMessages(e2) {
       if (!e2.length) return;
@@ -387275,25 +386676,15 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         await this.checkPending();
       }), this.events.on(A3.created, async (e2) => {
         const t = A3.created;
-        this.logger.info(`Emitting ${t}`), this.logger.debug({
-          type: "event",
-          event: t,
-          data: e2
-        }), await this.persist();
+        this.logger.info(`Emitting ${t}`), this.logger.debug({ type: "event", event: t, data: e2 }), await this.persist();
       }), this.events.on(A3.deleted, async (e2) => {
         const t = A3.deleted;
-        this.logger.info(`Emitting ${t}`), this.logger.debug({
-          type: "event",
-          event: t,
-          data: e2
-        }), await this.persist();
+        this.logger.info(`Emitting ${t}`), this.logger.debug({ type: "event", event: t, data: e2 }), await this.persist();
       });
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
@@ -387309,16 +386700,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var Zt2 = Object.getOwnPropertySymbols;
   var on2 = Object.prototype.hasOwnProperty;
   var an2 = Object.prototype.propertyIsEnumerable;
-  var Qt = (o5, e2, t) => e2 in o5 ? nn2(o5, e2, {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: t
-  }) : o5[e2] = t;
+  var Qt = (o5, e2, t) => e2 in o5 ? nn2(o5, e2, { enumerable: true, configurable: true, writable: true, value: t }) : o5[e2] = t;
   var cn2 = (o5, e2) => {
     for (var t in e2 || (e2 = {})) on2.call(e2, t) && Qt(o5, t, e2[t]);
-    if (Zt2)
-      for (var t of Zt2(e2)) an2.call(e2, t) && Qt(o5, t, e2[t]);
+    if (Zt2) for (var t of Zt2(e2)) an2.call(e2, t) && Qt(o5, t, e2[t]);
     return o5;
   };
   var ei = class extends u {
@@ -387330,14 +386715,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         await this.toEstablishConnection();
         try {
           const n5 = this.provider.request(t);
-          this.requestsInFlight.set(r3, {
-            promise: n5,
-            request: t
-          }), this.logger.trace({
-            id: r3,
-            method: t.method,
-            topic: (s4 = t.params) == null ? void 0 : s4.topic
-          }, "relayer.request - attempt to publish...");
+          this.requestsInFlight.set(r3, { promise: n5, request: t }), this.logger.trace({ id: r3, method: t.method, topic: (s4 = t.params) == null ? void 0 : s4.topic }, "relayer.request - attempt to publish...");
           const a4 = await new Promise(async (c6, h5) => {
             const d3 = () => {
               h5(new Error(`relayer.request - publish interrupted, id: ${r3}`));
@@ -387346,11 +386724,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
             const g3 = await n5;
             this.provider.off(T2.disconnect, d3), c6(g3);
           });
-          return this.logger.trace({
-            id: r3,
-            method: t.method,
-            topic: (i5 = t.params) == null ? void 0 : i5.topic
-          }, "relayer.request - published"), a4;
+          return this.logger.trace({ id: r3, method: t.method, topic: (i5 = t.params) == null ? void 0 : i5.topic }, "relayer.request - published"), a4;
         } catch (n5) {
           throw this.logger.debug(`Failed to Publish Request: ${r3}`), n5;
         } finally {
@@ -387372,13 +386746,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       }, this.onDisconnectHandler = () => {
         this.logger.trace("relayer disconnected"), this.onProviderDisconnect();
       }, this.onProviderErrorHandler = (t) => {
-        console.log(t);
         this.logger.error(t), this.events.emit(w4.error, t), this.logger.info("Fatal socket error received, closing transport"), this.transportClose();
       }, this.registerProviderListeners = () => {
         this.provider.on(T2.payload, this.onPayloadHandler), this.provider.on(T2.connect, this.onConnectHandler), this.provider.on(T2.disconnect, this.onDisconnectHandler), this.provider.on(T2.error, this.onProviderErrorHandler);
-      }, this.core = e2.core, this.logger = typeof e2.logger < "u" && typeof e2.logger != "string" ? E3(e2.logger, this.name) : (0, import_pino2.default)(k2({
-        level: e2.logger || Et
-      })), this.messages = new Yt2(this.logger, e2.core), this.subscriber = new Xt(this, this.logger), this.publisher = new Xr2(this, this.logger), this.relayUrl = e2?.relayUrl || Ie, this.projectId = e2.projectId, this.bundleId = ts(), this.provider = {};
+      }, this.core = e2.core, this.logger = typeof e2.logger < "u" && typeof e2.logger != "string" ? E3(e2.logger, this.name) : (0, import_pino2.default)(k2({ level: e2.logger || Et })), this.messages = new Yt2(this.logger, e2.core), this.subscriber = new Xt(this, this.logger), this.publisher = new Xr2(this, this.logger), this.relayUrl = e2?.relayUrl || Ie, this.projectId = e2.projectId, this.bundleId = ts(), this.provider = {};
     }
     async init() {
       if (this.logger.trace("Initialized"), this.registerEventListeners(), await Promise.all([this.messages.init(), this.subscriber.init()]), this.initialized = true, this.subscriber.cached.length > 0) try {
@@ -387399,12 +386770,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       return ((s4 = (t = (e2 = this.provider) == null ? void 0 : e2.connection) == null ? void 0 : t.socket) == null ? void 0 : s4.readyState) === 0;
     }
     async publish(e2, t, s4) {
-      this.isInitialized(), await this.publisher.publish(e2, t, s4), await this.recordMessageEvent({
-        topic: e2,
-        message: t,
-        publishedAt: Date.now(),
-        transportType: F.relay
-      });
+      this.isInitialized(), await this.publisher.publish(e2, t, s4), await this.recordMessageEvent({ topic: e2, message: t, publishedAt: Date.now(), transportType: F.relay });
     }
     async subscribe(e2, t) {
       var s4;
@@ -387489,18 +386855,9 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       this.logger.trace(`Batch of ${t.length} message events processed`);
     }
     async onLinkMessageEvent(e2, t) {
-      const {
-        topic: s4
-      } = e2;
+      const { topic: s4 } = e2;
       if (!t.sessionExists) {
-        const i5 = ms(import_time4.FIVE_MINUTES), r3 = {
-          topic: s4,
-          expiry: i5,
-          relay: {
-            protocol: "irn"
-          },
-          active: false
-        };
+        const i5 = ms(import_time4.FIVE_MINUTES), r3 = { topic: s4, expiry: i5, relay: { protocol: "irn" }, active: false };
         await this.core.pairing.pairings.set(s4, r3);
       }
       this.events.emit(w4.message, e2), await this.recordMessageEvent(e2);
@@ -387521,57 +386878,24 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     async createProvider() {
       this.provider.connection && this.unregisterProviderListeners();
       const e2 = await this.core.crypto.signJWT(this.relayUrl);
-      this.provider = new o4(new f2(is({
-        sdkVersion: Te,
-        protocol: this.protocol,
-        version: this.version,
-        relayUrl: this.relayUrl,
-        projectId: this.projectId,
-        auth: e2,
-        useOnCloseEvent: true,
-        bundleId: this.bundleId
-      }))), this.registerProviderListeners();
+      this.provider = new o4(new f2(is({ sdkVersion: Te, protocol: this.protocol, version: this.version, relayUrl: this.relayUrl, projectId: this.projectId, auth: e2, useOnCloseEvent: true, bundleId: this.bundleId }))), this.registerProviderListeners();
     }
     async recordMessageEvent(e2) {
-      const {
-        topic: t,
-        message: s4
-      } = e2;
+      const { topic: t, message: s4 } = e2;
       await this.messages.set(t, s4);
     }
     async shouldIgnoreMessageEvent(e2) {
-      const {
-        topic: t,
-        message: s4
-      } = e2;
+      const { topic: t, message: s4 } = e2;
       if (!s4 || s4.length === 0) return this.logger.debug(`Ignoring invalid/empty message: ${s4}`), true;
       if (!await this.subscriber.isSubscribed(t)) return this.logger.debug(`Ignoring message for non-subscribed topic ${t}`), true;
       const i5 = this.messages.has(t, s4);
       return i5 && this.logger.debug(`Ignoring duplicate message: ${s4}`), i5;
     }
     async onProviderPayload(e2) {
-      if (this.logger.debug("Incoming Relay Payload"), this.logger.trace({
-        type: "payload",
-        direction: "incoming",
-        payload: e2
-      }), isJsonRpcRequest(e2)) {
+      if (this.logger.debug("Incoming Relay Payload"), this.logger.trace({ type: "payload", direction: "incoming", payload: e2 }), isJsonRpcRequest(e2)) {
         if (!e2.method.endsWith(wt)) return;
-        const t = e2.params, {
-          topic: s4,
-          message: i5,
-          publishedAt: r3,
-          attestation: n5
-        } = t.data, a4 = {
-          topic: s4,
-          message: i5,
-          publishedAt: r3,
-          transportType: F.relay,
-          attestation: n5
-        };
-        this.logger.debug("Emitting Relayer Payload"), this.logger.trace(cn2({
-          type: "event",
-          event: t.id
-        }, a4)), this.events.emit(t.id, a4), await this.acknowledgePayload(e2), await this.onMessageEvent(a4);
+        const t = e2.params, { topic: s4, message: i5, publishedAt: r3, attestation: n5 } = t.data, a4 = { topic: s4, message: i5, publishedAt: r3, transportType: F.relay, attestation: n5 };
+        this.logger.debug("Emitting Relayer Payload"), this.logger.trace(cn2({ type: "event", event: t.id }, a4)), this.events.emit(t.id, a4), await this.acknowledgePayload(e2), await this.onMessageEvent(a4);
       } else isJsonRpcResponse(e2) && this.events.emit(w4.message_ack, e2);
     }
     async onMessageEvent(e2) {
@@ -387597,9 +386921,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
@@ -387615,16 +386937,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var ti = Object.getOwnPropertySymbols;
   var ln2 = Object.prototype.hasOwnProperty;
   var un2 = Object.prototype.propertyIsEnumerable;
-  var ii = (o5, e2, t) => e2 in o5 ? hn2(o5, e2, {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: t
-  }) : o5[e2] = t;
+  var ii = (o5, e2, t) => e2 in o5 ? hn2(o5, e2, { enumerable: true, configurable: true, writable: true, value: t }) : o5[e2] = t;
   var si = (o5, e2) => {
     for (var t in e2 || (e2 = {})) ln2.call(e2, t) && ii(o5, t, e2[t]);
-    if (ti)
-      for (var t of ti(e2)) un2.call(e2, t) && ii(o5, t, e2[t]);
+    if (ti) for (var t of ti(e2)) un2.call(e2, t) && ii(o5, t, e2[t]);
     return o5;
   };
   var ri = class extends p3 {
@@ -387634,32 +386950,13 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
           this.getKey && n5 !== null && !Pe(n5) ? this.map.set(this.getKey(n5), n5) : sh(n5) ? this.map.set(n5.id, n5) : ah(n5) && this.map.set(n5.topic, n5);
         }), this.cached = [], this.initialized = true);
       }, this.set = async (n5, a4) => {
-        this.isInitialized(), this.map.has(n5) ? await this.update(n5, a4) : (this.logger.debug("Setting value"), this.logger.trace({
-          type: "method",
-          method: "set",
-          key: n5,
-          value: a4
-        }), this.map.set(n5, a4), await this.persist());
-      }, this.get = (n5) => (this.isInitialized(), this.logger.debug("Getting value"), this.logger.trace({
-        type: "method",
-        method: "get",
-        key: n5
-      }), this.getData(n5)), this.getAll = (n5) => (this.isInitialized(), n5 ? this.values.filter((a4) => Object.keys(n5).every((c6) => (0, import_lodash.default)(a4[c6], n5[c6]))) : this.values), this.update = async (n5, a4) => {
-        this.isInitialized(), this.logger.debug("Updating value"), this.logger.trace({
-          type: "method",
-          method: "update",
-          key: n5,
-          update: a4
-        });
+        this.isInitialized(), this.map.has(n5) ? await this.update(n5, a4) : (this.logger.debug("Setting value"), this.logger.trace({ type: "method", method: "set", key: n5, value: a4 }), this.map.set(n5, a4), await this.persist());
+      }, this.get = (n5) => (this.isInitialized(), this.logger.debug("Getting value"), this.logger.trace({ type: "method", method: "get", key: n5 }), this.getData(n5)), this.getAll = (n5) => (this.isInitialized(), n5 ? this.values.filter((a4) => Object.keys(n5).every((c6) => (0, import_lodash.default)(a4[c6], n5[c6]))) : this.values), this.update = async (n5, a4) => {
+        this.isInitialized(), this.logger.debug("Updating value"), this.logger.trace({ type: "method", method: "update", key: n5, update: a4 });
         const c6 = si(si({}, this.getData(n5)), a4);
         this.map.set(n5, c6), await this.persist();
       }, this.delete = async (n5, a4) => {
-        this.isInitialized(), this.map.has(n5) && (this.logger.debug("Deleting value"), this.logger.trace({
-          type: "method",
-          method: "delete",
-          key: n5,
-          reason: a4
-        }), this.map.delete(n5), this.addToRecentlyDeleted(n5), await this.persist());
+        this.isInitialized(), this.map.has(n5) && (this.logger.debug("Deleting value"), this.logger.trace({ type: "method", method: "delete", key: n5, reason: a4 }), this.map.delete(n5), this.addToRecentlyDeleted(n5), await this.persist());
       }, this.logger = E3(t, this.name), this.storagePrefix = i5, this.getKey = r3;
     }
     get context() {
@@ -387690,14 +386987,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       const t = this.map.get(e2);
       if (!t) {
         if (this.recentlyDeleted.includes(e2)) {
-          const {
-            message: i5
-          } = xe("MISSING_OR_INVALID", `Record was recently deleted - ${this.name}: ${e2}`);
+          const { message: i5 } = xe("MISSING_OR_INVALID", `Record was recently deleted - ${this.name}: ${e2}`);
           throw this.logger.error(i5), new Error(i5);
         }
-        const {
-          message: s4
-        } = xe("NO_MATCHING_KEY", `${this.name}: ${e2}`);
+        const { message: s4 } = xe("NO_MATCHING_KEY", `${this.name}: ${e2}`);
         throw this.logger.error(s4), new Error(s4);
       }
       return t;
@@ -387710,25 +387003,17 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         const e2 = await this.getDataStore();
         if (typeof e2 > "u" || !e2.length) return;
         if (this.map.size) {
-          const {
-            message: t
-          } = xe("RESTORE_WILL_OVERRIDE", this.name);
+          const { message: t } = xe("RESTORE_WILL_OVERRIDE", this.name);
           throw this.logger.error(t), new Error(t);
         }
-        this.cached = e2, this.logger.debug(`Successfully Restored value for ${this.name}`), this.logger.trace({
-          type: "method",
-          method: "restore",
-          value: this.values
-        });
+        this.cached = e2, this.logger.debug(`Successfully Restored value for ${this.name}`), this.logger.trace({ type: "method", method: "restore", value: this.values });
       } catch (e2) {
         this.logger.debug(`Failed to Restore value for ${this.name}`), this.logger.error(e2);
       }
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
@@ -387737,124 +387022,56 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     constructor(e2, t) {
       this.core = e2, this.logger = t, this.name = xt, this.version = Ot2, this.events = new import_events9.default(), this.initialized = false, this.storagePrefix = O4, this.ignoredPayloadTypes = [pr], this.registeredMethods = [], this.init = async () => {
         this.initialized || (await this.pairings.init(), await this.cleanup(), this.registerRelayerEvents(), this.registerExpirerEvents(), this.initialized = true, this.logger.trace("Initialized"));
-      }, this.register = ({
-        methods: s4
-      }) => {
+      }, this.register = ({ methods: s4 }) => {
         this.isInitialized(), this.registeredMethods = [.../* @__PURE__ */ new Set([...this.registeredMethods, ...s4])];
       }, this.create = async (s4) => {
         this.isInitialized();
-        const i5 = Eu(), r3 = await this.core.crypto.setSymKey(i5), n5 = ms(import_time4.FIVE_MINUTES), a4 = {
-          protocol: _t
-        }, c6 = {
-          topic: r3,
-          expiry: n5,
-          relay: a4,
-          active: false
-        }, h5 = Gu({
-          protocol: this.core.protocol,
-          version: this.core.version,
-          topic: r3,
-          symKey: i5,
-          relay: a4,
-          expiryTimestamp: n5,
-          methods: s4?.methods
-        });
-        return this.core.expirer.set(r3, n5), await this.pairings.set(r3, c6), await this.core.relayer.subscribe(r3, {
-          transportType: s4?.transportType
-        }), {
-          topic: r3,
-          uri: h5
-        };
+        const i5 = Eu(), r3 = await this.core.crypto.setSymKey(i5), n5 = ms(import_time4.FIVE_MINUTES), a4 = { protocol: _t }, c6 = { topic: r3, expiry: n5, relay: a4, active: false }, h5 = Gu({ protocol: this.core.protocol, version: this.core.version, topic: r3, symKey: i5, relay: a4, expiryTimestamp: n5, methods: s4?.methods });
+        return this.core.expirer.set(r3, n5), await this.pairings.set(r3, c6), await this.core.relayer.subscribe(r3, { transportType: s4?.transportType }), { topic: r3, uri: h5 };
       }, this.pair = async (s4) => {
         this.isInitialized();
-        const i5 = this.core.eventClient.createEvent({
-          properties: {
-            topic: s4?.uri,
-            trace: [z5.pairing_started]
-          }
-        });
+        const i5 = this.core.eventClient.createEvent({ properties: { topic: s4?.uri, trace: [z5.pairing_started] } });
         this.isValidPair(s4, i5);
-        const {
-          topic: r3,
-          symKey: n5,
-          relay: a4,
-          expiryTimestamp: c6,
-          methods: h5
-        } = Ju(s4.uri);
+        const { topic: r3, symKey: n5, relay: a4, expiryTimestamp: c6, methods: h5 } = Ju(s4.uri);
         i5.props.properties.topic = r3, i5.addTrace(z5.pairing_uri_validation_success), i5.addTrace(z5.pairing_uri_not_expired);
         let d3;
         if (this.pairings.keys.includes(r3)) {
           if (d3 = this.pairings.get(r3), i5.addTrace(z5.existing_pairing), d3.active) throw i5.setError($3.active_pairing_already_exists), new Error(`Pairing already exists: ${r3}. Please try again with a new connection URI.`);
           i5.addTrace(z5.pairing_not_expired);
         }
-        const g3 = c6 || ms(import_time4.FIVE_MINUTES), m3 = {
-          topic: r3,
-          relay: a4,
-          expiry: g3,
-          active: false,
-          methods: h5
-        };
-        this.core.expirer.set(r3, g3), await this.pairings.set(r3, m3), i5.addTrace(z5.store_new_pairing), s4.activatePairing && await this.activate({
-          topic: r3
-        }), this.events.emit(Z2.create, m3), i5.addTrace(z5.emit_inactive_pairing), this.core.crypto.keychain.has(r3) || await this.core.crypto.setSymKey(n5, r3), i5.addTrace(z5.subscribing_pairing_topic);
+        const g3 = c6 || ms(import_time4.FIVE_MINUTES), m3 = { topic: r3, relay: a4, expiry: g3, active: false, methods: h5 };
+        this.core.expirer.set(r3, g3), await this.pairings.set(r3, m3), i5.addTrace(z5.store_new_pairing), s4.activatePairing && await this.activate({ topic: r3 }), this.events.emit(Z2.create, m3), i5.addTrace(z5.emit_inactive_pairing), this.core.crypto.keychain.has(r3) || await this.core.crypto.setSymKey(n5, r3), i5.addTrace(z5.subscribing_pairing_topic);
         try {
           await this.core.relayer.confirmOnlineStateOrThrow();
         } catch {
           i5.setError($3.no_internet_connection);
         }
         try {
-          await this.core.relayer.subscribe(r3, {
-            relay: a4
-          });
+          await this.core.relayer.subscribe(r3, { relay: a4 });
         } catch (b5) {
           throw i5.setError($3.subscribe_pairing_topic_failure), b5;
         }
         return i5.addTrace(z5.subscribe_pairing_topic_success), m3;
-      }, this.activate = async ({
-        topic: s4
-      }) => {
+      }, this.activate = async ({ topic: s4 }) => {
         this.isInitialized();
         const i5 = ms(import_time4.THIRTY_DAYS);
-        this.core.expirer.set(s4, i5), await this.pairings.update(s4, {
-          active: true,
-          expiry: i5
-        });
+        this.core.expirer.set(s4, i5), await this.pairings.update(s4, { active: true, expiry: i5 });
       }, this.ping = async (s4) => {
         this.isInitialized(), await this.isValidPing(s4);
-        const {
-          topic: i5
-        } = s4;
+        const { topic: i5 } = s4;
         if (this.pairings.keys.includes(i5)) {
-          const r3 = await this.sendRequest(i5, "wc_pairingPing", {}), {
-            done: n5,
-            resolve: a4,
-            reject: c6
-          } = ls();
-          this.events.once(bs("pairing_ping", r3), ({
-            error: h5
-          }) => {
+          const r3 = await this.sendRequest(i5, "wc_pairingPing", {}), { done: n5, resolve: a4, reject: c6 } = ls();
+          this.events.once(bs("pairing_ping", r3), ({ error: h5 }) => {
             h5 ? c6(h5) : a4();
           }), await n5();
         }
-      }, this.updateExpiry = async ({
-        topic: s4,
-        expiry: i5
-      }) => {
-        this.isInitialized(), await this.pairings.update(s4, {
-          expiry: i5
-        });
-      }, this.updateMetadata = async ({
-        topic: s4,
-        metadata: i5
-      }) => {
-        this.isInitialized(), await this.pairings.update(s4, {
-          peerMetadata: i5
-        });
+      }, this.updateExpiry = async ({ topic: s4, expiry: i5 }) => {
+        this.isInitialized(), await this.pairings.update(s4, { expiry: i5 });
+      }, this.updateMetadata = async ({ topic: s4, metadata: i5 }) => {
+        this.isInitialized(), await this.pairings.update(s4, { peerMetadata: i5 });
       }, this.getPairings = () => (this.isInitialized(), this.pairings.values), this.disconnect = async (s4) => {
         this.isInitialized(), await this.isValidDisconnect(s4);
-        const {
-          topic: i5
-        } = s4;
+        const { topic: i5 } = s4;
         this.pairings.keys.includes(i5) && (await this.sendRequest(i5, "wc_pairingDelete", er("USER_DISCONNECTED")), await this.deletePairing(i5));
       }, this.sendRequest = async (s4, i5, r3) => {
         const n5 = formatJsonRpcRequest(i5, r3), a4 = await this.core.crypto.encode(s4, n5), c6 = j3[i5].req;
@@ -387871,10 +387088,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         const s4 = this.pairings.getAll().filter((i5) => As(i5.expiry));
         await Promise.all(s4.map((i5) => this.deletePairing(i5.topic)));
       }, this.onRelayEventRequest = (s4) => {
-        const {
-          topic: i5,
-          payload: r3
-        } = s4;
+        const { topic: i5, payload: r3 } = s4;
         switch (r3.method) {
           case "wc_pairingPing":
             return this.onPairingPingRequest(i5, r3);
@@ -387884,10 +387098,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
             return this.onUnknownRpcMethodRequest(i5, r3);
         }
       }, this.onRelayEventResponse = async (s4) => {
-        const {
-          topic: i5,
-          payload: r3
-        } = s4, n5 = (await this.core.history.get(i5, r3.id)).request.method;
+        const { topic: i5, payload: r3 } = s4, n5 = (await this.core.history.get(i5, r3.id)).request.method;
         switch (n5) {
           case "wc_pairingPing":
             return this.onPairingPingResponse(i5, r3);
@@ -387895,47 +387106,26 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
             return this.onUnknownRpcMethodResponse(n5);
         }
       }, this.onPairingPingRequest = async (s4, i5) => {
-        const {
-          id: r3
-        } = i5;
+        const { id: r3 } = i5;
         try {
-          this.isValidPing({
-            topic: s4
-          }), await this.sendResult(r3, s4, true), this.events.emit(Z2.ping, {
-            id: r3,
-            topic: s4
-          });
+          this.isValidPing({ topic: s4 }), await this.sendResult(r3, s4, true), this.events.emit(Z2.ping, { id: r3, topic: s4 });
         } catch (n5) {
           await this.sendError(r3, s4, n5), this.logger.error(n5);
         }
       }, this.onPairingPingResponse = (s4, i5) => {
-        const {
-          id: r3
-        } = i5;
+        const { id: r3 } = i5;
         setTimeout(() => {
-          isJsonRpcResult(i5) ? this.events.emit(bs("pairing_ping", r3), {}) : isJsonRpcError(i5) && this.events.emit(bs("pairing_ping", r3), {
-            error: i5.error
-          });
+          isJsonRpcResult(i5) ? this.events.emit(bs("pairing_ping", r3), {}) : isJsonRpcError(i5) && this.events.emit(bs("pairing_ping", r3), { error: i5.error });
         }, 500);
       }, this.onPairingDeleteRequest = async (s4, i5) => {
-        const {
-          id: r3
-        } = i5;
+        const { id: r3 } = i5;
         try {
-          this.isValidDisconnect({
-            topic: s4
-          }), await this.deletePairing(s4), this.events.emit(Z2.delete, {
-            id: r3,
-            topic: s4
-          });
+          this.isValidDisconnect({ topic: s4 }), await this.deletePairing(s4), this.events.emit(Z2.delete, { id: r3, topic: s4 });
         } catch (n5) {
           await this.sendError(r3, s4, n5), this.logger.error(n5);
         }
       }, this.onUnknownRpcMethodRequest = async (s4, i5) => {
-        const {
-          id: r3,
-          method: n5
-        } = i5;
+        const { id: r3, method: n5 } = i5;
         try {
           if (this.registeredMethods.includes(n5)) return;
           const a4 = er("WC_METHOD_UNSUPPORTED", n5);
@@ -387948,77 +387138,53 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       }, this.isValidPair = (s4, i5) => {
         var r3;
         if (!dh(s4)) {
-          const {
-            message: a4
-          } = xe("MISSING_OR_INVALID", `pair() params: ${s4}`);
+          const { message: a4 } = xe("MISSING_OR_INVALID", `pair() params: ${s4}`);
           throw i5.setError($3.malformed_pairing_uri), new Error(a4);
         }
         if (!oh(s4.uri)) {
-          const {
-            message: a4
-          } = xe("MISSING_OR_INVALID", `pair() uri: ${s4.uri}`);
+          const { message: a4 } = xe("MISSING_OR_INVALID", `pair() uri: ${s4.uri}`);
           throw i5.setError($3.malformed_pairing_uri), new Error(a4);
         }
         const n5 = Ju(s4?.uri);
         if (!((r3 = n5?.relay) != null && r3.protocol)) {
-          const {
-            message: a4
-          } = xe("MISSING_OR_INVALID", "pair() uri#relay-protocol");
+          const { message: a4 } = xe("MISSING_OR_INVALID", "pair() uri#relay-protocol");
           throw i5.setError($3.malformed_pairing_uri), new Error(a4);
         }
         if (!(n5 != null && n5.symKey)) {
-          const {
-            message: a4
-          } = xe("MISSING_OR_INVALID", "pair() uri#symKey");
+          const { message: a4 } = xe("MISSING_OR_INVALID", "pair() uri#symKey");
           throw i5.setError($3.malformed_pairing_uri), new Error(a4);
         }
         if (n5 != null && n5.expiryTimestamp && (0, import_time4.toMiliseconds)(n5?.expiryTimestamp) < Date.now()) {
           i5.setError($3.pairing_expired);
-          const {
-            message: a4
-          } = xe("EXPIRED", "pair() URI has expired. Please try again with a new connection URI.");
+          const { message: a4 } = xe("EXPIRED", "pair() URI has expired. Please try again with a new connection URI.");
           throw new Error(a4);
         }
       }, this.isValidPing = async (s4) => {
         if (!dh(s4)) {
-          const {
-            message: r3
-          } = xe("MISSING_OR_INVALID", `ping() params: ${s4}`);
+          const { message: r3 } = xe("MISSING_OR_INVALID", `ping() params: ${s4}`);
           throw new Error(r3);
         }
-        const {
-          topic: i5
-        } = s4;
+        const { topic: i5 } = s4;
         await this.isValidPairingTopic(i5);
       }, this.isValidDisconnect = async (s4) => {
         if (!dh(s4)) {
-          const {
-            message: r3
-          } = xe("MISSING_OR_INVALID", `disconnect() params: ${s4}`);
+          const { message: r3 } = xe("MISSING_OR_INVALID", `disconnect() params: ${s4}`);
           throw new Error(r3);
         }
-        const {
-          topic: i5
-        } = s4;
+        const { topic: i5 } = s4;
         await this.isValidPairingTopic(i5);
       }, this.isValidPairingTopic = async (s4) => {
         if (!Yt(s4, false)) {
-          const {
-            message: i5
-          } = xe("MISSING_OR_INVALID", `pairing topic should be a string: ${s4}`);
+          const { message: i5 } = xe("MISSING_OR_INVALID", `pairing topic should be a string: ${s4}`);
           throw new Error(i5);
         }
         if (!this.pairings.keys.includes(s4)) {
-          const {
-            message: i5
-          } = xe("NO_MATCHING_KEY", `pairing topic doesn't exist: ${s4}`);
+          const { message: i5 } = xe("NO_MATCHING_KEY", `pairing topic doesn't exist: ${s4}`);
           throw new Error(i5);
         }
         if (As(this.pairings.get(s4).expiry)) {
           await this.deletePairing(s4);
-          const {
-            message: i5
-          } = xe("EXPIRED", `pairing topic: ${s4}`);
+          const { message: i5 } = xe("EXPIRED", `pairing topic: ${s4}`);
           throw new Error(i5);
         }
       }, this.core = e2, this.logger = E3(t, this.name), this.pairings = new ri(this.core, this.logger, this.name, this.storagePrefix);
@@ -388028,29 +387194,17 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
     registerRelayerEvents() {
       this.core.relayer.on(w4.message, async (e2) => {
-        const {
-          topic: t,
-          message: s4,
-          transportType: i5
-        } = e2;
+        const { topic: t, message: s4, transportType: i5 } = e2;
         if (!this.pairings.keys.includes(t) || i5 === F.link_mode || this.ignoredPayloadTypes.includes(this.core.crypto.getPayloadType(s4))) return;
         const r3 = await this.core.crypto.decode(t, s4);
         try {
-          isJsonRpcRequest(r3) ? (this.core.history.set(t, r3), this.onRelayEventRequest({
-            topic: t,
-            payload: r3
-          })) : isJsonRpcResponse(r3) && (await this.core.history.resolve(r3), await this.onRelayEventResponse({
-            topic: t,
-            payload: r3
-          }), this.core.history.delete(t, r3.id));
+          isJsonRpcRequest(r3) ? (this.core.history.set(t, r3), this.onRelayEventRequest({ topic: t, payload: r3 })) : isJsonRpcResponse(r3) && (await this.core.history.resolve(r3), await this.onRelayEventResponse({ topic: t, payload: r3 }), this.core.history.delete(t, r3.id));
         } catch (n5) {
           this.logger.error(n5);
         }
@@ -388058,12 +387212,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     registerExpirerEvents() {
       this.core.expirer.on(R3.expired, async (e2) => {
-        const {
-          topic: t
-        } = gs(e2.target);
-        t && this.pairings.keys.includes(t) && (await this.deletePairing(t, true), this.events.emit(Z2.expire, {
-          topic: t
-        }));
+        const { topic: t } = gs(e2.target);
+        t && this.pairings.keys.includes(t) && (await this.deletePairing(t, true), this.events.emit(Z2.expire, { topic: t }));
       });
     }
   };
@@ -388072,47 +387222,15 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       super(e2, t), this.core = e2, this.logger = t, this.records = /* @__PURE__ */ new Map(), this.events = new import_events9.EventEmitter(), this.name = At, this.version = Nt, this.cached = [], this.initialized = false, this.storagePrefix = O4, this.init = async () => {
         this.initialized || (this.logger.trace("Initialized"), await this.restore(), this.cached.forEach((s4) => this.records.set(s4.id, s4)), this.cached = [], this.registerEventListeners(), this.initialized = true);
       }, this.set = (s4, i5, r3) => {
-        if (this.isInitialized(), this.logger.debug("Setting JSON-RPC request history record"), this.logger.trace({
-          type: "method",
-          method: "set",
-          topic: s4,
-          request: i5,
-          chainId: r3
-        }), this.records.has(i5.id)) return;
-        const n5 = {
-          id: i5.id,
-          topic: s4,
-          request: {
-            method: i5.method,
-            params: i5.params || null
-          },
-          chainId: r3,
-          expiry: ms(import_time4.THIRTY_DAYS)
-        };
+        if (this.isInitialized(), this.logger.debug("Setting JSON-RPC request history record"), this.logger.trace({ type: "method", method: "set", topic: s4, request: i5, chainId: r3 }), this.records.has(i5.id)) return;
+        const n5 = { id: i5.id, topic: s4, request: { method: i5.method, params: i5.params || null }, chainId: r3, expiry: ms(import_time4.THIRTY_DAYS) };
         this.records.set(n5.id, n5), this.persist(), this.events.emit(P.created, n5);
       }, this.resolve = async (s4) => {
-        if (this.isInitialized(), this.logger.debug("Updating JSON-RPC response history record"), this.logger.trace({
-          type: "method",
-          method: "update",
-          response: s4
-        }), !this.records.has(s4.id)) return;
+        if (this.isInitialized(), this.logger.debug("Updating JSON-RPC response history record"), this.logger.trace({ type: "method", method: "update", response: s4 }), !this.records.has(s4.id)) return;
         const i5 = await this.getRecord(s4.id);
-        typeof i5.response > "u" && (i5.response = isJsonRpcError(s4) ? {
-          error: s4.error
-        } : {
-          result: s4.result
-        }, this.records.set(i5.id, i5), this.persist(), this.events.emit(P.updated, i5));
-      }, this.get = async (s4, i5) => (this.isInitialized(), this.logger.debug("Getting record"), this.logger.trace({
-        type: "method",
-        method: "get",
-        topic: s4,
-        id: i5
-      }), await this.getRecord(i5)), this.delete = (s4, i5) => {
-        this.isInitialized(), this.logger.debug("Deleting record"), this.logger.trace({
-          type: "method",
-          method: "delete",
-          id: i5
-        }), this.values.forEach((r3) => {
+        typeof i5.response > "u" && (i5.response = isJsonRpcError(s4) ? { error: s4.error } : { result: s4.result }, this.records.set(i5.id, i5), this.persist(), this.events.emit(P.updated, i5));
+      }, this.get = async (s4, i5) => (this.isInitialized(), this.logger.debug("Getting record"), this.logger.trace({ type: "method", method: "get", topic: s4, id: i5 }), await this.getRecord(i5)), this.delete = (s4, i5) => {
+        this.isInitialized(), this.logger.debug("Deleting record"), this.logger.trace({ type: "method", method: "delete", id: i5 }), this.values.forEach((r3) => {
           if (r3.topic === s4) {
             if (typeof i5 < "u" && r3.id !== i5) return;
             this.records.delete(r3.id), this.events.emit(P.deleted, r3);
@@ -388147,11 +387265,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       const e2 = [];
       return this.values.forEach((t) => {
         if (typeof t.response < "u") return;
-        const s4 = {
-          topic: t.topic,
-          request: formatJsonRpcRequest(t.request.method, t.request.params, t.id),
-          chainId: t.chainId
-        };
+        const s4 = { topic: t.topic, request: formatJsonRpcRequest(t.request.method, t.request.params, t.id), chainId: t.chainId };
         return e2.push(s4);
       }), e2;
     }
@@ -388165,9 +387279,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       this.isInitialized();
       const t = this.records.get(e2);
       if (!t) {
-        const {
-          message: s4
-        } = xe("NO_MATCHING_KEY", `${this.name}: ${e2}`);
+        const { message: s4 } = xe("NO_MATCHING_KEY", `${this.name}: ${e2}`);
         throw new Error(s4);
       }
       return t;
@@ -388180,16 +387292,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         const e2 = await this.getJsonRpcRecords();
         if (typeof e2 > "u" || !e2.length) return;
         if (this.records.size) {
-          const {
-            message: t
-          } = xe("RESTORE_WILL_OVERRIDE", this.name);
+          const { message: t } = xe("RESTORE_WILL_OVERRIDE", this.name);
           throw this.logger.error(t), new Error(t);
         }
-        this.cached = e2, this.logger.debug(`Successfully Restored records for ${this.name}`), this.logger.trace({
-          type: "method",
-          method: "restore",
-          records: this.values
-        });
+        this.cached = e2, this.logger.debug(`Successfully Restored records for ${this.name}`), this.logger.trace({ type: "method", method: "restore", records: this.values });
       } catch (e2) {
         this.logger.debug(`Failed to Restore records for ${this.name}`), this.logger.error(e2);
       }
@@ -388197,25 +387303,13 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     registerEventListeners() {
       this.events.on(P.created, (e2) => {
         const t = P.created;
-        this.logger.info(`Emitting ${t}`), this.logger.debug({
-          type: "event",
-          event: t,
-          record: e2
-        });
+        this.logger.info(`Emitting ${t}`), this.logger.debug({ type: "event", event: t, record: e2 });
       }), this.events.on(P.updated, (e2) => {
         const t = P.updated;
-        this.logger.info(`Emitting ${t}`), this.logger.debug({
-          type: "event",
-          event: t,
-          record: e2
-        });
+        this.logger.info(`Emitting ${t}`), this.logger.debug({ type: "event", event: t, record: e2 });
       }), this.events.on(P.deleted, (e2) => {
         const t = P.deleted;
-        this.logger.info(`Emitting ${t}`), this.logger.debug({
-          type: "event",
-          event: t,
-          record: e2
-        });
+        this.logger.info(`Emitting ${t}`), this.logger.debug({ type: "event", event: t, record: e2 });
       }), this.core.heartbeat.on(r.pulse, () => {
         this.cleanup();
       });
@@ -388233,9 +387327,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
@@ -388253,14 +387345,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         }
       }, this.set = (s4, i5) => {
         this.isInitialized();
-        const r3 = this.formatTarget(s4), n5 = {
-          target: r3,
-          expiry: i5
-        };
-        this.expirations.set(r3, n5), this.checkExpiry(r3, n5), this.events.emit(R3.created, {
-          target: r3,
-          expiration: n5
-        });
+        const r3 = this.formatTarget(s4), n5 = { target: r3, expiry: i5 };
+        this.expirations.set(r3, n5), this.checkExpiry(r3, n5), this.events.emit(R3.created, { target: r3, expiration: n5 });
       }, this.get = (s4) => {
         this.isInitialized();
         const i5 = this.formatTarget(s4);
@@ -388268,10 +387354,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       }, this.del = (s4) => {
         if (this.isInitialized(), this.has(s4)) {
           const i5 = this.formatTarget(s4), r3 = this.getExpiration(i5);
-          this.expirations.delete(i5), this.events.emit(R3.deleted, {
-            target: i5,
-            expiration: r3
-          });
+          this.expirations.delete(i5), this.events.emit(R3.deleted, { target: i5, expiration: r3 });
         }
       }, this.on = (s4, i5) => {
         this.events.on(s4, i5);
@@ -388301,9 +387384,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     formatTarget(e2) {
       if (typeof e2 == "string") return ps(e2);
       if (typeof e2 == "number") return vs(e2);
-      const {
-        message: t
-      } = xe("UNKNOWN_TYPE", `Target type: ${typeof e2}`);
+      const { message: t } = xe("UNKNOWN_TYPE", `Target type: ${typeof e2}`);
       throw new Error(t);
     }
     async setExpirations(e2) {
@@ -388320,16 +387401,10 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         const e2 = await this.getExpirations();
         if (typeof e2 > "u" || !e2.length) return;
         if (this.expirations.size) {
-          const {
-            message: t
-          } = xe("RESTORE_WILL_OVERRIDE", this.name);
+          const { message: t } = xe("RESTORE_WILL_OVERRIDE", this.name);
           throw this.logger.error(t), new Error(t);
         }
-        this.cached = e2, this.logger.debug(`Successfully Restored expirations for ${this.name}`), this.logger.trace({
-          type: "method",
-          method: "restore",
-          expirations: this.values
-        });
+        this.cached = e2, this.logger.debug(`Successfully Restored expirations for ${this.name}`), this.logger.trace({ type: "method", method: "restore", expirations: this.values });
       } catch (e2) {
         this.logger.debug(`Failed to Restore expirations for ${this.name}`), this.logger.error(e2);
       }
@@ -388337,24 +387412,17 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     getExpiration(e2) {
       const t = this.expirations.get(e2);
       if (!t) {
-        const {
-          message: s4
-        } = xe("NO_MATCHING_KEY", `${this.name}: ${e2}`);
+        const { message: s4 } = xe("NO_MATCHING_KEY", `${this.name}: ${e2}`);
         throw this.logger.warn(s4), new Error(s4);
       }
       return t;
     }
     checkExpiry(e2, t) {
-      const {
-        expiry: s4
-      } = t;
+      const { expiry: s4 } = t;
       (0, import_time4.toMiliseconds)(s4) - Date.now() <= 0 && this.expire(e2, t);
     }
     expire(e2, t) {
-      this.expirations.delete(e2), this.events.emit(R3.expired, {
-        target: e2,
-        expiration: t
-      });
+      this.expirations.delete(e2), this.events.emit(R3.expired, { target: e2, expiration: t });
     }
     checkExpirations() {
       this.core.relayer.connected && this.expirations.forEach((e2, t) => this.checkExpiry(t, e2));
@@ -388362,40 +387430,24 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     registerEventListeners() {
       this.core.heartbeat.on(r.pulse, () => this.checkExpirations()), this.events.on(R3.created, (e2) => {
         const t = R3.created;
-        this.logger.info(`Emitting ${t}`), this.logger.debug({
-          type: "event",
-          event: t,
-          data: e2
-        }), this.persist();
+        this.logger.info(`Emitting ${t}`), this.logger.debug({ type: "event", event: t, data: e2 }), this.persist();
       }), this.events.on(R3.expired, (e2) => {
         const t = R3.expired;
-        this.logger.info(`Emitting ${t}`), this.logger.debug({
-          type: "event",
-          event: t,
-          data: e2
-        }), this.persist();
+        this.logger.info(`Emitting ${t}`), this.logger.debug({ type: "event", event: t, data: e2 }), this.persist();
       }), this.events.on(R3.deleted, (e2) => {
         const t = R3.deleted;
-        this.logger.info(`Emitting ${t}`), this.logger.debug({
-          type: "event",
-          event: t,
-          data: e2
-        }), this.persist();
+        this.logger.info(`Emitting ${t}`), this.logger.debug({ type: "event", event: t, data: e2 }), this.persist();
       });
     }
     isInitialized() {
       if (!this.initialized) {
-        const {
-          message: e2
-        } = xe("NOT_INITIALIZED", this.name);
+        const { message: e2 } = xe("NOT_INITIALIZED", this.name);
         throw new Error(e2);
       }
     }
   };
   var y5 = {};
-  Object.defineProperty(y5, "__esModule", {
-    value: true
-  }), y5.getLocalStorage = y5.getLocalStorageOrThrow = y5.getCrypto = y5.getCryptoOrThrow = y5.getLocation = y5.getLocationOrThrow = y5.getNavigator = y5.getNavigatorOrThrow = ci = y5.getDocument = y5.getDocumentOrThrow = y5.getFromWindowOrThrow = y5.getFromWindow = void 0;
+  Object.defineProperty(y5, "__esModule", { value: true }), y5.getLocalStorage = y5.getLocalStorageOrThrow = y5.getCrypto = y5.getCryptoOrThrow = y5.getLocation = y5.getLocationOrThrow = y5.getNavigator = y5.getNavigatorOrThrow = ci = y5.getDocument = y5.getDocumentOrThrow = y5.getFromWindowOrThrow = y5.getFromWindow = void 0;
   function U4(o5) {
     let e2;
     return typeof window < "u" && typeof window[o5] < "u" && (e2 = window[o5]), e2;
@@ -388454,10 +387506,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         this.isDevEnv || (this.publicKey = await this.store.getItem(this.storeKey), this.publicKey && (0, import_time4.toMiliseconds)((i5 = this.publicKey) == null ? void 0 : i5.expiresAt) < Date.now() && (this.logger.debug("verify v2 public key expired"), await this.removePublicKey()));
       }, this.register = async (i5) => {
         if (!gr() || this.isDevEnv) return;
-        const r3 = window.location.origin, {
-          id: n5,
-          decryptedId: a4
-        } = i5, c6 = `${this.verifyUrlV3}/attestation?projectId=${this.core.projectId}&origin=${r3}&id=${n5}&decryptedId=${a4}`;
+        const r3 = window.location.origin, { id: n5, decryptedId: a4 } = i5, c6 = `${this.verifyUrlV3}/attestation?projectId=${this.core.projectId}&origin=${r3}&id=${n5}&decryptedId=${a4}`;
         try {
           const h5 = ci(), d3 = this.startAbortTimer(import_time4.ONE_SECOND * 5), g3 = await new Promise((m3, b5) => {
             const l5 = () => {
@@ -388465,9 +387514,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
             };
             this.abortController.signal.addEventListener("abort", l5);
             const p4 = h5.createElement("iframe");
-            p4.src = c6, p4.style.display = "none", p4.addEventListener("error", l5, {
-              signal: this.abortController.signal
-            });
+            p4.src = c6, p4.style.display = "none", p4.addEventListener("error", l5, { signal: this.abortController.signal });
             const _4 = (D3) => {
               if (!D3.data) return;
               const E4 = JSON.parse(D3.data);
@@ -388476,9 +387523,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
                 clearInterval(d3), h5.body.removeChild(p4), this.abortController.signal.removeEventListener("abort", l5), window.removeEventListener("message", _4), m3(E4.attestation === null ? "" : E4.attestation);
               }
             };
-            h5.body.appendChild(p4), window.addEventListener("message", _4, {
-              signal: this.abortController.signal
-            });
+            h5.body.appendChild(p4), window.addEventListener("message", _4, { signal: this.abortController.signal });
           });
           return this.logger.debug("jwt attestation", g3), g3;
         } catch (h5) {
@@ -388487,11 +387532,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         return "";
       }, this.resolve = async (i5) => {
         if (this.isDevEnv) return "";
-        const {
-          attestationId: r3,
-          hash: n5,
-          encryptedId: a4
-        } = i5;
+        const { attestationId: r3, hash: n5, encryptedId: a4 } = i5;
         if (r3 === "") {
           this.logger.debug("resolve: attestationId is empty, skipping");
           return;
@@ -388512,9 +387553,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         return this.fetchAttestation(n5, c6);
       }, this.fetchAttestation = async (i5, r3) => {
         this.logger.debug(`resolving attestation: ${i5} from url: ${r3}`);
-        const n5 = this.startAbortTimer(import_time4.ONE_SECOND * 5), a4 = await fetch(`${r3}/attestation/${i5}?v2Supported=true`, {
-          signal: this.abortController.signal
-        });
+        const n5 = this.startAbortTimer(import_time4.ONE_SECOND * 5), a4 = await fetch(`${r3}/attestation/${i5}?v2Supported=true`, { signal: this.abortController.signal });
         return clearTimeout(n5), a4.status === 200 ? await a4.json() : void 0;
       }, this.getVerifyUrl = (i5) => {
         let r3 = i5 || Q2;
@@ -388522,9 +387561,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       }, this.fetchPublicKey = async () => {
         try {
           this.logger.debug(`fetching public key from: ${this.verifyUrlV3}`);
-          const i5 = this.startAbortTimer(import_time4.FIVE_SECONDS), r3 = await fetch(`${this.verifyUrlV3}/public-key`, {
-            signal: this.abortController.signal
-          });
+          const i5 = this.startAbortTimer(import_time4.FIVE_SECONDS), r3 = await fetch(`${this.verifyUrlV3}/public-key`, { signal: this.abortController.signal });
           return clearTimeout(i5), await r3.json();
         } catch (i5) {
           this.logger.warn(i5);
@@ -388555,16 +387592,9 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         const i5 = await this.fetchPromise;
         return this.fetchPromise = void 0, i5;
       }, this.validateAttestation = (i5, r3) => {
-        const n5 = Uu(i5, r3.publicKey), a4 = {
-          hasExpired: (0, import_time4.toMiliseconds)(n5.exp) < Date.now(),
-          payload: n5
-        };
+        const n5 = Uu(i5, r3.publicKey), a4 = { hasExpired: (0, import_time4.toMiliseconds)(n5.exp) < Date.now(), payload: n5 };
         if (a4.hasExpired) throw this.logger.warn("resolve: jwt attestation expired"), new Error("JWT attestation expired");
-        return {
-          origin: a4.payload.origin,
-          isScam: a4.payload.isScam,
-          isVerified: a4.payload.isVerified
-        };
+        return { origin: a4.payload.origin, isScam: a4.payload.isScam, isVerified: a4.payload.isVerified };
       }, this.logger = E3(t, this.name), this.abortController = new AbortController(), this.isDevEnv = bi() && process.env.IS_VITEST, this.init();
     }
     get storeKey() {
@@ -388580,24 +387610,8 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var li = class extends v3 {
     constructor(e2, t) {
       super(e2, t), this.projectId = e2, this.logger = t, this.context = Ut2, this.registerDeviceToken = async (s4) => {
-        const {
-          clientId: i5,
-          token: r3,
-          notificationType: n5,
-          enableEncrypted: a4 = false
-        } = s4, c6 = `${Kt2}/${this.projectId}/clients`;
-        await fetch(c6, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            client_id: i5,
-            type: n5,
-            token: r3,
-            always_raw: a4
-          })
-        });
+        const { clientId: i5, token: r3, notificationType: n5, enableEncrypted: a4 = false } = s4, c6 = `${Kt2}/${this.projectId}/clients`;
+        await fetch(c6, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ client_id: i5, type: n5, token: r3, always_raw: a4 }) });
       }, this.logger = E3(t, this.context);
     }
   };
@@ -388605,54 +387619,24 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var ui = Object.getOwnPropertySymbols;
   var wn2 = Object.prototype.hasOwnProperty;
   var In2 = Object.prototype.propertyIsEnumerable;
-  var di2 = (o5, e2, t) => e2 in o5 ? vn2(o5, e2, {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: t
-  }) : o5[e2] = t;
+  var di2 = (o5, e2, t) => e2 in o5 ? vn2(o5, e2, { enumerable: true, configurable: true, writable: true, value: t }) : o5[e2] = t;
   var te2 = (o5, e2) => {
     for (var t in e2 || (e2 = {})) wn2.call(e2, t) && di2(o5, t, e2[t]);
-    if (ui)
-      for (var t of ui(e2)) In2.call(e2, t) && di2(o5, t, e2[t]);
+    if (ui) for (var t of ui(e2)) In2.call(e2, t) && di2(o5, t, e2[t]);
     return o5;
   };
   var gi2 = class extends C3 {
     constructor(e2, t, s4 = true) {
       super(e2, t, s4), this.core = e2, this.logger = t, this.context = Vt, this.storagePrefix = O4, this.storageVersion = Bt, this.events = /* @__PURE__ */ new Map(), this.shouldPersist = false, this.createEvent = (i5) => {
-        const {
-          event: r3 = "ERROR",
-          type: n5 = "",
-          properties: {
-            topic: a4,
-            trace: c6
-          }
-        } = i5, h5 = Ms(), d3 = this.core.projectId || "", g3 = Date.now(), m3 = te2({
-          eventId: h5,
-          bundleId: d3,
-          timestamp: g3,
-          props: {
-            event: r3,
-            type: n5,
-            properties: {
-              topic: a4,
-              trace: c6
-            }
-          }
-        }, this.setMethods(h5));
+        const { event: r3 = "ERROR", type: n5 = "", properties: { topic: a4, trace: c6 } } = i5, h5 = Ms(), d3 = this.core.projectId || "", g3 = Date.now(), m3 = te2({ eventId: h5, bundleId: d3, timestamp: g3, props: { event: r3, type: n5, properties: { topic: a4, trace: c6 } } }, this.setMethods(h5));
         return this.telemetryEnabled && (this.events.set(h5, m3), this.shouldPersist = true), m3;
       }, this.getEvent = (i5) => {
-        const {
-          eventId: r3,
-          topic: n5
-        } = i5;
+        const { eventId: r3, topic: n5 } = i5;
         if (r3) return this.events.get(r3);
         const a4 = Array.from(this.events.values()).find((c6) => c6.props.properties.topic === n5);
         if (a4) return te2(te2({}, a4), this.setMethods(a4.eventId));
       }, this.deleteEvent = (i5) => {
-        const {
-          eventId: r3
-        } = i5;
+        const { eventId: r3 } = i5;
         this.events.delete(r3), this.shouldPersist = true;
       }, this.setEventListeners = () => {
         this.core.heartbeat.on(r.pulse, async () => {
@@ -388660,10 +387644,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
             (0, import_time4.fromMiliseconds)(Date.now()) - (0, import_time4.fromMiliseconds)(i5.timestamp) > jt2 && (this.events.delete(i5.eventId), this.shouldPersist = true);
           });
         });
-      }, this.setMethods = (i5) => ({
-        addTrace: (r3) => this.addTrace(i5, r3),
-        setError: (r3) => this.setError(i5, r3)
-      }), this.addTrace = (i5, r3) => {
+      }, this.setMethods = (i5) => ({ addTrace: (r3) => this.addTrace(i5, r3), setError: (r3) => this.setError(i5, r3) }), this.addTrace = (i5, r3) => {
         const n5 = this.events.get(i5);
         n5 && (n5.props.properties.trace.push(r3), this.events.set(i5, n5), this.shouldPersist = true);
       }, this.setError = (i5, r3) => {
@@ -388686,11 +387667,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
         const i5 = [];
         for (const [r3, n5] of this.events) n5.props.type && i5.push(n5);
         if (i5.length !== 0) try {
-          if ((await fetch(`${qt2}?projectId=${this.core.projectId}&st=events_sdk&sv=js-${Te}`, {
-            method: "POST",
-            body: JSON.stringify(i5)
-          })).ok)
-            for (const r3 of i5) this.events.delete(r3.eventId), this.shouldPersist = true;
+          if ((await fetch(`${qt2}?projectId=${this.core.projectId}&st=events_sdk&sv=js-${Te}`, { method: "POST", body: JSON.stringify(i5) })).ok) for (const r3 of i5) this.events.delete(r3.eventId), this.shouldPersist = true;
         } catch (r3) {
           this.logger.warn(r3);
         }
@@ -388706,58 +387683,25 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var pi2 = Object.getOwnPropertySymbols;
   var Cn2 = Object.prototype.hasOwnProperty;
   var Sn2 = Object.prototype.propertyIsEnumerable;
-  var yi2 = (o5, e2, t) => e2 in o5 ? Tn2(o5, e2, {
-    enumerable: true,
-    configurable: true,
-    writable: true,
-    value: t
-  }) : o5[e2] = t;
+  var yi2 = (o5, e2, t) => e2 in o5 ? Tn2(o5, e2, { enumerable: true, configurable: true, writable: true, value: t }) : o5[e2] = t;
   var Di2 = (o5, e2) => {
     for (var t in e2 || (e2 = {})) Cn2.call(e2, t) && yi2(o5, t, e2[t]);
-    if (pi2)
-      for (var t of pi2(e2)) Sn2.call(e2, t) && yi2(o5, t, e2[t]);
+    if (pi2) for (var t of pi2(e2)) Sn2.call(e2, t) && yi2(o5, t, e2[t]);
     return o5;
   };
   var ae2 = class _ae extends n3 {
     constructor(e2) {
       var t;
-      super(e2), this.protocol = Ee, this.version = ve2, this.name = oe2, this.events = new import_events9.EventEmitter(), this.initialized = false, this.on = (n5, a4) => this.events.on(n5, a4), this.once = (n5, a4) => this.events.once(n5, a4), this.off = (n5, a4) => this.events.off(n5, a4), this.removeListener = (n5, a4) => this.events.removeListener(n5, a4), this.dispatchEnvelope = ({
-        topic: n5,
-        message: a4,
-        sessionExists: c6
-      }) => {
+      super(e2), this.protocol = Ee, this.version = ve2, this.name = oe2, this.events = new import_events9.EventEmitter(), this.initialized = false, this.on = (n5, a4) => this.events.on(n5, a4), this.once = (n5, a4) => this.events.once(n5, a4), this.off = (n5, a4) => this.events.off(n5, a4), this.removeListener = (n5, a4) => this.events.removeListener(n5, a4), this.dispatchEnvelope = ({ topic: n5, message: a4, sessionExists: c6 }) => {
         if (!n5 || !a4) return;
-        const h5 = {
-          topic: n5,
-          message: a4,
-          publishedAt: Date.now(),
-          transportType: F.link_mode
-        };
-        this.relayer.onLinkMessageEvent(h5, {
-          sessionExists: c6
-        });
+        const h5 = { topic: n5, message: a4, publishedAt: Date.now(), transportType: F.link_mode };
+        this.relayer.onLinkMessageEvent(h5, { sessionExists: c6 });
       }, this.projectId = e2?.projectId, this.relayUrl = e2?.relayUrl || Ie, this.customStoragePrefix = e2 != null && e2.customStoragePrefix ? `:${e2.customStoragePrefix}` : "";
-      const s4 = k2({
-        level: typeof e2?.logger == "string" && e2.logger ? e2.logger : lt.logger
-      }), {
-        logger: i5,
-        chunkLoggerController: r3
-      } = A2({
-        opts: s4,
-        maxSizeInBytes: e2?.maxLogBlobSizeInBytes,
-        loggerOverride: e2?.logger
-      });
+      const s4 = k2({ level: typeof e2?.logger == "string" && e2.logger ? e2.logger : lt.logger }), { logger: i5, chunkLoggerController: r3 } = A2({ opts: s4, maxSizeInBytes: e2?.maxLogBlobSizeInBytes, loggerOverride: e2?.logger });
       this.logChunkController = r3, (t = this.logChunkController) != null && t.downloadLogsBlobInBrowser && (window.downloadLogsBlobInBrowser = async () => {
         var n5, a4;
-        (n5 = this.logChunkController) != null && n5.downloadLogsBlobInBrowser && ((a4 = this.logChunkController) == null || a4.downloadLogsBlobInBrowser({
-          clientId: await this.crypto.getClientId()
-        }));
-      }), this.logger = E3(i5, this.name), this.heartbeat = new i(), this.crypto = new Ht2(this, this.logger, e2?.keychain), this.history = new oi(this, this.logger), this.expirer = new ai(this, this.logger), this.storage = e2 != null && e2.storage ? e2.storage : new h(Di2(Di2({}, ut), e2?.storageOptions)), this.relayer = new ei({
-        core: this,
-        logger: this.logger,
-        relayUrl: this.relayUrl,
-        projectId: this.projectId
-      }), this.pairing = new ni(this, this.logger), this.verify = new hi(this, this.logger, this.storage), this.echoClient = new li(this.projectId || "", this.logger), this.linkModeSupportedApps = [], this.eventClient = new gi2(this, this.logger, e2?.telemetryEnabled);
+        (n5 = this.logChunkController) != null && n5.downloadLogsBlobInBrowser && ((a4 = this.logChunkController) == null || a4.downloadLogsBlobInBrowser({ clientId: await this.crypto.getClientId() }));
+      }), this.logger = E3(i5, this.name), this.heartbeat = new i(), this.crypto = new Ht2(this, this.logger, e2?.keychain), this.history = new oi(this, this.logger), this.expirer = new ai(this, this.logger), this.storage = e2 != null && e2.storage ? e2.storage : new h(Di2(Di2({}, ut), e2?.storageOptions)), this.relayer = new ei({ core: this, logger: this.logger, relayUrl: this.relayUrl, projectId: this.projectId }), this.pairing = new ni(this, this.logger), this.verify = new hi(this, this.logger, this.storage), this.echoClient = new li(this.projectId || "", this.logger), this.linkModeSupportedApps = [], this.eventClient = new gi2(this, this.logger, e2?.telemetryEnabled);
     }
     static async init(e2) {
       const t = new _ae(e2);
@@ -388773,9 +387717,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
     }
     async getLogsBlob() {
       var e2;
-      return (e2 = this.logChunkController) == null ? void 0 : e2.logsToBlob({
-        clientId: await this.crypto.getClientId()
-      });
+      return (e2 = this.logChunkController) == null ? void 0 : e2.logsToBlob({ clientId: await this.crypto.getClientId() });
     }
     async addLinkModeSupportedApp(e2) {
       this.linkModeSupportedApps.includes(e2) || (this.linkModeSupportedApps.push(e2), await this.storage.setItem(Ce2, this.linkModeSupportedApps));
@@ -391480,12 +390422,44 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
   var disconnect = async (walletRepo, wallet) => {
     return walletRepo.disconnect(wallet.walletName, false);
   };
+  var CurrentWalletKey = "cosmos-kit@2:core//current-wallet";
   var InnerInner = (props) => {
     const [render2, forceRender] = React.useState(0);
     const [walletStates, setWalletStates] = React.useState({});
     const [walletData, setWalletData] = React.useState({});
     const [walletMessages, setWalletMessages] = React.useState({});
     const [wallet, setWallet] = React.useState(void 0);
+    const [isConnecting, setIsConnecting] = React.useState(false);
+    const [isDisconnecting, setIsDisonnecting] = React.useState(false);
+    const handleConnect = React.useCallback(
+      (wallet_) => {
+        setWallet(wallet_);
+        setIsConnecting(true);
+        connect(props.walletRepo, wallet_).finally(() => setIsConnecting(false));
+      },
+      [props.walletRepo]
+    );
+    const handleDisconnect = React.useCallback(
+      (wallet2) => {
+        setIsDisonnecting(true);
+        disconnect(props.walletRepo, wallet2).finally(() => setIsDisonnecting(false));
+        setWallet(void 0);
+      },
+      [props.walletRepo]
+    );
+    React.useEffect(
+      () => {
+        const currentWalletName = localStorage.getItem(CurrentWalletKey);
+        if (currentWalletName) {
+          const foundWallet = props.walletRepo.wallets.find((wallet_) => wallet_.walletName === currentWalletName);
+          if (foundWallet) {
+            setWallet(foundWallet);
+            connect(props.walletRepo, foundWallet);
+          }
+        }
+      },
+      []
+    );
     const setWalletActions = React.useCallback(
       (wallet_) => {
         const walletName = wallet_.walletName;
@@ -391536,21 +390510,7 @@ Bitcoin has significantly influenced the financial world, inspiring the developm
       },
       [render2]
     );
-    const handleConnect = React.useCallback(
-      (wallet_) => {
-        setWallet(wallet_);
-        connect(props.walletRepo, wallet_);
-      },
-      [props.walletRepo]
-    );
-    const handleDisconnect = React.useCallback(
-      (wallet2) => {
-        disconnect(props.walletRepo, wallet2);
-        setWallet(void 0);
-      },
-      [props.walletRepo]
-    );
-    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h1", null, "Hello. This is version 7"), wallet && walletData[wallet.walletName] && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("button", { onClick: () => handleDisconnect(wallet) }, "Disconnect")), /* @__PURE__ */ React.createElement("div", null, "Choose from the list of wallets below"), /* @__PURE__ */ React.createElement("div", null, props.walletRepo.wallets.map((wallet2) => {
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("h1", null, "Hello. This is version 7"), isConnecting && /* @__PURE__ */ React.createElement("div", null, "Connecting ..."), isDisconnecting && /* @__PURE__ */ React.createElement("div", null, "Disconnecting ..."), wallet && walletData[wallet.walletName] && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("button", { disabled: isConnecting || isDisconnecting, onClick: () => handleDisconnect(wallet) }, "Disconnect")), /* @__PURE__ */ React.createElement("div", null, "Choose from the list of wallets below"), /* @__PURE__ */ React.createElement("div", null, props.walletRepo.wallets.map((wallet2) => {
       return /* @__PURE__ */ React.createElement("div", { key: wallet2.walletName }, /* @__PURE__ */ React.createElement("button", { onClick: () => {
         handleConnect(wallet2);
       } }, wallet2.walletName));

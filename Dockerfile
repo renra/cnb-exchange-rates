@@ -11,6 +11,7 @@ RUN curl -L -o dumb-init.deb https://github.com/Yelp/dumb-init/releases/download
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
 RUN npm install -g node-watch typescript sass esbuild
+RUN npm install node-watch
 
 COPY package.json package.json
 COPY package-lock.json package-lock.json

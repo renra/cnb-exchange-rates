@@ -25,23 +25,55 @@ const disconnect = async (walletRepo: WalletRepo, wallet: ChainWalletBase) => {
   return walletRepo.disconnect(wallet.walletName, false)
 }
 
+const CurrentWalletKey = 'cosmos-kit@2:core//current-wallet'
+
 const InnerInner = (props: InnerInnerProps) : JSX.Element => {
   const [render, forceRender] = React.useState(0)
 
-  // const [walletManagerState, setWalletManagerState] = React.useState<State>(State.Init)
-  // const [walletRepoState, setWalletRepoState] = React.useState<State>(State.Init)
   const [walletStates, setWalletStates] = React.useState<Record<string, State>>({})
-
-  // const [walletManagerData, setWalletManagerData] = React.useState<Data | undefined>(undefined)
-  // const [walletRepoData, setWalletRepoData] = React.useState<Data | undefined>(undefined)
   const [walletData, setWalletData] = React.useState<Record<string, Data | undefined>>({})
-
-  // const [walletManagerMessage, setWalletManagerMessage] = React.useState<string | undefined>(undefined)
-  // const [walletRepoMessage, setWalletRepoMessage] = React.useState<string | undefined>(undefined)
   const [walletMessages, setWalletMessages] = React.useState<Record<string, string | undefined>>({})
 
-  // TODO: Need to update this when preserving session after refresh
   const [wallet, setWallet] = React.useState<ChainWalletBase | undefined>(undefined)
+  const [isConnecting, setIsConnecting] = React.useState<boolean>(false)
+  const [isDisconnecting, setIsDisonnecting] = React.useState<boolean>(false)
+
+  const handleConnect = React.useCallback(
+    (wallet_: ChainWalletBase) => {
+      setWallet(wallet_)
+      setIsConnecting(true)
+      connect(props.walletRepo, wallet_)
+        .finally(() => setIsConnecting(false))
+    },
+    [props.walletRepo]
+  )
+
+  const handleDisconnect = React.useCallback(
+    (wallet: ChainWalletBase) => {
+      setIsDisonnecting(true)
+      disconnect(props.walletRepo, wallet)
+        .finally(() => setIsDisonnecting(false))
+
+      setWallet(undefined)
+    },
+    [props.walletRepo]
+  )
+
+  React.useEffect(
+    () => {
+      const currentWalletName = localStorage.getItem(CurrentWalletKey)
+
+      if(currentWalletName) {
+        const foundWallet = props.walletRepo.wallets.find((wallet_) => wallet_.walletName === currentWalletName)        
+
+        if(foundWallet) {
+          setWallet(foundWallet)
+          connect(props.walletRepo, foundWallet)
+        }
+      }
+    },
+    []
+  )
 
   const setWalletActions = React.useCallback(
     (wallet_: ChainWalletBase) => {
@@ -80,20 +112,6 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
 
   React.useEffect(
     () => {
-      // props.walletManager.setActions({
-      //   data: setWalletManagerData,
-      //   message: setWalletManagerMessage,
-      //   state: setWalletManagerState,
-      //   render: forceRender,
-      // })
-
-      // props.walletRepo.setActions({
-      //   data: setWalletRepoData,
-      //   message: setWalletRepoMessage,
-      //   state: setWalletRepoState,
-      //   render: forceRender,
-      // })
-
       props.walletRepo.wallets.forEach((repoWallet) => {
         setWalletActions(repoWallet)
       })
@@ -112,29 +130,15 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
     [render]
   )
 
-  const handleConnect = React.useCallback(
-    (wallet_: ChainWalletBase) => {
-      setWallet(wallet_)
-      connect(props.walletRepo, wallet_)
-    },
-    [props.walletRepo]
-  )
-
-  const handleDisconnect = React.useCallback(
-    (wallet: ChainWalletBase) => {
-      disconnect(props.walletRepo, wallet)
-      setWallet(undefined)
-    },
-    [props.walletRepo]
-  )
-
   return (
     <>
       <h1>Hello. This is version 7</h1>
 
+      { isConnecting && <div>Connecting ...</div> }
+      { isDisconnecting && <div>Disconnecting ...</div> }
       { wallet && walletData[wallet.walletName] &&
           <div>
-            <button onClick={() => handleDisconnect(wallet)}>Disconnect</button>
+            <button disabled={isConnecting || isDisconnecting} onClick={() => handleDisconnect(wallet)}>Disconnect</button>
           </div>
       }
 
