@@ -27,47 +27,75 @@ const disconnect = async (walletRepo: WalletRepo, wallet: ChainWalletBase) => {
 
 const InnerInner = (props: InnerInnerProps) : JSX.Element => {
   const [render, forceRender] = React.useState(0)
-  const [state, setState] = React.useState<State>(State.Init)
-  const [data, setData] = React.useState<Data | undefined>(undefined)
-  const [message, setMessage] = React.useState<string | undefined>(undefined)
+
+  // const [walletManagerState, setWalletManagerState] = React.useState<State>(State.Init)
+  // const [walletRepoState, setWalletRepoState] = React.useState<State>(State.Init)
+  const [walletStates, setWalletStates] = React.useState<Record<string, State>>({})
+
+  // const [walletManagerData, setWalletManagerData] = React.useState<Data | undefined>(undefined)
+  // const [walletRepoData, setWalletRepoData] = React.useState<Data | undefined>(undefined)
+  const [walletData, setWalletData] = React.useState<Record<string, Data | undefined>>({})
+
+  // const [walletManagerMessage, setWalletManagerMessage] = React.useState<string | undefined>(undefined)
+  // const [walletRepoMessage, setWalletRepoMessage] = React.useState<string | undefined>(undefined)
+  const [walletMessages, setWalletMessages] = React.useState<Record<string, string | undefined>>({})
 
   // TODO: Need to update this when preserving session after refresh
   const [wallet, setWallet] = React.useState<ChainWalletBase | undefined>(undefined)
 
+  const setWalletActions = React.useCallback(
+    (wallet_: ChainWalletBase) => {
+      const walletName = wallet_.walletName
+
+      wallet_.setActions({
+        data: (data) => {
+          setWalletData((walletData_) => {
+            return {
+              ...walletData_,
+              [walletName]: data
+            }
+          })
+        },
+        message: (data) => {
+          setWalletMessages((walletMessages_) => {
+            return {
+              ...walletMessages_,
+              [walletName]: data
+            }
+          })
+        },
+        state: (data) => {
+          setWalletStates((walletStates_) => {
+            return {
+              ...walletStates_,
+              [walletName]: data
+            }
+          })
+        },
+        render: forceRender,
+      })
+    },
+    []
+  )
+
   React.useEffect(
     () => {
-      props.walletManager.setActions({
-        data: setData,
-        message: setMessage,
-        state: setState,
-        render: forceRender
-      })
+      // props.walletManager.setActions({
+      //   data: setWalletManagerData,
+      //   message: setWalletManagerMessage,
+      //   state: setWalletManagerState,
+      //   render: forceRender,
+      // })
 
-      props.walletManager.walletRepos.forEach((walletRepo) => {
-        walletRepo.setActions({
-          data: setData,
-          message: setMessage,
-          state: setState,
-          render: forceRender
-        })
+      // props.walletRepo.setActions({
+      //   data: setWalletRepoData,
+      //   message: setWalletRepoMessage,
+      //   state: setWalletRepoState,
+      //   render: forceRender,
+      // })
 
-        walletRepo.wallets.forEach((wallet) => {
-          wallet.setActions({
-            data: setData,
-            message: setMessage,
-            state: setState,
-            render: forceRender
-          })
-        })
-      })
-
-      props.walletManager.mainWallets.forEach((wallet) => {
-          wallet.setActions({
-            data: setData,
-            message: setMessage,
-            state: setState,
-            render: forceRender
-          })
+      props.walletRepo.wallets.forEach((repoWallet) => {
+        setWalletActions(repoWallet)
       })
     },
     []
@@ -85,9 +113,9 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
   )
 
   const handleConnect = React.useCallback(
-    (wallet: ChainWalletBase) => {
-      setWallet(wallet)
-      connect(props.walletRepo, wallet)
+    (wallet_: ChainWalletBase) => {
+      setWallet(wallet_)
+      connect(props.walletRepo, wallet_)
     },
     [props.walletRepo]
   )
@@ -95,33 +123,20 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
   const handleDisconnect = React.useCallback(
     (wallet: ChainWalletBase) => {
       disconnect(props.walletRepo, wallet)
+      setWallet(undefined)
     },
     [props.walletRepo]
   )
 
   return (
     <>
-      <h1>Hello. This is version 6</h1>
+      <h1>Hello. This is version 7</h1>
 
-      { data && wallet && <div><button onClick={() => handleDisconnect(wallet)}>Disconnect</button></div>}
-
-      <>
-        <div>
-          Wallet manager state is {JSON.stringify(state)}
-        </div>
-      </>
-
-      <>
-        <div>
-          Wallet manager message is {JSON.stringify(message)}
-        </div>
-      </>
-
-      <>
-        <div>
-          Wallet manager data is {JSON.stringify(data)}
-        </div>
-      </>
+      { wallet && walletData[wallet.walletName] &&
+          <div>
+            <button onClick={() => handleDisconnect(wallet)}>Disconnect</button>
+          </div>
+      }
 
       <div>
         Choose from the list of wallets below
@@ -138,6 +153,28 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
           )
         })}
       </div>
+
+      <hr />
+
+      <h2>Wallets</h2>
+
+      <>
+        <div>
+          Wallet states are {JSON.stringify(walletStates)}
+        </div>
+      </>
+
+      <>
+        <div>
+          Wallet data are {JSON.stringify(walletData)}
+        </div>
+      </>
+
+      <>
+        <div>
+          Wallet messages are {JSON.stringify(walletMessages)}
+        </div>
+      </>
     </>
   )  
 }
@@ -166,7 +203,13 @@ function App(): JSX.Element {
       },
       undefined,
       undefined,
-      undefined
+      {
+        // 1 year
+        duration: 31556926000,
+        callback: () => {
+          console.log('Callback')
+        }
+      }
     );
 
     const cosmosWalletRepo = walletManager
