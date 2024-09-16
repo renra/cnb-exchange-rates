@@ -175,7 +175,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
         {props.walletRepo.wallets.map((wallet) => {
           return (
             <div key={wallet.walletName}>
-              <button disabled={isConnecting || isDisconnecting} onClick={() => { handleConnect(wallet) }}>
+              <button disabled={isConnecting || isDisconnecting || !!walletData[wallet.walletName]} onClick={() => { handleConnect(wallet) }}>
                 {wallet.walletName}
               </button>
             </div>
