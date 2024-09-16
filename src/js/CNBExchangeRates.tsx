@@ -38,6 +38,9 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
   const [isConnecting, setIsConnecting] = React.useState<boolean>(false)
   const [isDisconnecting, setIsDisonnecting] = React.useState<boolean>(false)
 
+  const [signingCosmWasmClient, setSigningCosmWasmClient] = React.useState<SigningCosmWasmClient | undefined>(undefined)
+  const [signingCosmWasmClientError, setSigningCosmWasmClientError] = React.useState<Error | undefined>(undefined)
+
   const handleConnect = React.useCallback(
     (wallet_: ChainWalletBase) => {
       setWallet(wallet_)
@@ -137,9 +140,31 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
       { isConnecting && <div>Connecting ...</div> }
       { isDisconnecting && <div>Disconnecting ...</div> }
       { wallet && walletData[wallet.walletName] &&
-          <div>
-            <button disabled={isConnecting || isDisconnecting} onClick={() => handleDisconnect(wallet)}>Disconnect</button>
-          </div>
+          <>
+            <div>
+              <button disabled={isConnecting || isDisconnecting} onClick={() => handleDisconnect(wallet)}>Disconnect</button>
+            </div>
+
+            <div>
+              { signingCosmWasmClient 
+                 ? <div>Signing cosmwasm client ready</div>
+                 : <div>
+                     <button 
+                       onClick={
+                         () => { 
+                           wallet.getSigningCosmWasmClient()
+                             .then((client) => setSigningCosmWasmClient(client)) 
+                             .catch((error: Error) => setSigningCosmWasmClientError(error)) 
+                         }
+                      }
+                     >
+                       Create Signing CosmWasm client
+                     </button>
+                     { signingCosmWasmClientError && <div>Got this error when trying to create the signing cosmwasm client: {signingCosmWasmClientError}</div> }
+                   </div>
+              }
+            </div>
+          </>
       }
 
       <div>
@@ -150,7 +175,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
         {props.walletRepo.wallets.map((wallet) => {
           return (
             <div key={wallet.walletName}>
-              <button onClick={() => { handleConnect(wallet) }}>
+              <button disabled={isConnecting || isDisconnecting} onClick={() => { handleConnect(wallet) }}>
                 {wallet.walletName}
               </button>
             </div>
