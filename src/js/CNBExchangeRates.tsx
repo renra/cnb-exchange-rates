@@ -26,6 +26,7 @@ const disconnect = async (walletRepo: WalletRepo, wallet: ChainWalletBase) => {
 }
 
 const InnerInner = (props: InnerInnerProps) : JSX.Element => {
+  const [render, forceRender] = React.useState(0)
   const [state, setState] = React.useState<State>(State.Init)
   const [data, setData] = React.useState<Data | undefined>(undefined)
   const [message, setMessage] = React.useState<string | undefined>(undefined)
@@ -39,6 +40,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
         data: setData,
         message: setMessage,
         state: setState,
+        render: forceRender
       })
 
       props.walletManager.walletRepos.forEach((walletRepo) => {
@@ -46,6 +48,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
           data: setData,
           message: setMessage,
           state: setState,
+          render: forceRender
         })
 
         walletRepo.wallets.forEach((wallet) => {
@@ -53,6 +56,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
             data: setData,
             message: setMessage,
             state: setState,
+            render: forceRender
           })
         })
       })
@@ -62,22 +66,23 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
             data: setData,
             message: setMessage,
             state: setState,
+            render: forceRender
           })
       })
     },
     []
   )
 
-  // React.useEffect(
-  //   () => {
-  //     props.walletManager.onMounted()
+  React.useEffect(
+    () => {
+      props.walletManager.onMounted()
 
-  //     return () => {
-  //       props.walletManager.onUnmounted()
-  //     }
-  //   }, 
-  //   [render]
-  // )
+      return () => {
+        props.walletManager.onUnmounted()
+      }
+    }, 
+    [render]
+  )
 
   const handleConnect = React.useCallback(
     (wallet: ChainWalletBase) => {
