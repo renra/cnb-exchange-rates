@@ -101,7 +101,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
 
   return (
     <>
-      <h1>Hello. This is version 5</h1>
+      <h1>Hello. This is version 6</h1>
 
       { data && wallet && <div><button onClick={() => handleDisconnect(wallet)}>Disconnect</button></div>}
 
