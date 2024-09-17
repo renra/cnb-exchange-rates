@@ -4,6 +4,8 @@ import * as ReactDOM from 'react-dom';
 import { chains, assets } from 'chain-registry'
 import { wallets as keplrWallets } from '@cosmos-kit/keplr'
 import { wallets as leapWallets } from '@cosmos-kit/leap'
+import { SigningStargateClient } from '@cosmjs/stargate'
+import { SigningCosmWasmClient } from '@cosmjs/cosmwasm-stargate'
 
 import { 
   ChainWalletBase, 
@@ -37,6 +39,9 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
   const [wallet, setWallet] = React.useState<ChainWalletBase | undefined>(undefined)
   const [isConnecting, setIsConnecting] = React.useState<boolean>(false)
   const [isDisconnecting, setIsDisonnecting] = React.useState<boolean>(false)
+
+  const [signingStargateClient, setSigningStargateClient] = React.useState<SigningStargateClient | undefined>(undefined)
+  const [signingStargateClientError, setSigningStargateClientError] = React.useState<Error | undefined>(undefined)
 
   const [signingCosmWasmClient, setSigningCosmWasmClient] = React.useState<SigningCosmWasmClient | undefined>(undefined)
   const [signingCosmWasmClientError, setSigningCosmWasmClientError] = React.useState<Error | undefined>(undefined)
@@ -161,6 +166,24 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
                        Create Signing CosmWasm client
                      </button>
                      { signingCosmWasmClientError && <div>Got this error when trying to create the signing cosmwasm client: {signingCosmWasmClientError}</div> }
+                   </div>
+              }
+
+              { signingStargateClient 
+                 ? <div>Signing stargate client ready</div>
+                 : <div>
+                     <button 
+                       onClick={
+                         () => { 
+                           wallet.getSigningStargateClient()
+                             .then((client) => setSigningStargateClient(client)) 
+                             .catch((error: Error) => setSigningStargateClientError(error)) 
+                         }
+                      }
+                     >
+                       Create Signing Stargate client
+                     </button>
+                     { signingStargateClientError && <div>Got this error when trying to create the signing stargate client: {signingStargateClientError}</div> }
                    </div>
               }
             </div>
