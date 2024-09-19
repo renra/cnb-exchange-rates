@@ -32,6 +32,25 @@ const CurrentWalletKey = 'cosmos-kit@2:core//current-wallet'
 const InnerInner = (props: InnerInnerProps) : JSX.Element => {
   const [render, forceRender] = React.useState(0)
 
+  React.useEffect(
+    () => {
+      props.walletManager.setActions({
+        render: forceRender,
+        data: forceRender,
+        message: forceRender,
+        state: forceRender
+      })
+
+      props.walletRepo.setActions({
+        render: forceRender,
+        data: forceRender,
+        message: forceRender,
+        state: forceRender
+      })
+    },
+    []
+  )
+
   const [walletStates, setWalletStates] = React.useState<Record<string, State>>({})
   const [walletData, setWalletData] = React.useState<Record<string, Data | undefined>>({})
   const [walletMessages, setWalletMessages] = React.useState<Record<string, string | undefined>>({})
@@ -244,7 +263,7 @@ if(!chain) { throw new Error('No chain') }
 const walletManager = new WalletManager(
   [chain],
   [...keplrWallets, ...leapWallets],
-  new Logger('INFO'),
+  new Logger('DEBUG'),
   true,
   true,
   undefined,
@@ -269,7 +288,6 @@ const walletManager = new WalletManager(
 const cosmosWalletRepo = walletManager
   .walletRepos
   .find((walletRepo) => walletRepo.namespace === 'cosmos')
-
 
 function App(): JSX.Element {
   if(cosmosWalletRepo) {
