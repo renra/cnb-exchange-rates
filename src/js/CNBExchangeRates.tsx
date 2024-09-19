@@ -51,6 +51,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
       setWallet(wallet_)
       setIsConnecting(true)
       connect(props.walletRepo, wallet_)
+        .catch(err => alert(JSON.stringify(err)))
         .finally(() => setIsConnecting(false))
     },
     [props.walletRepo]
@@ -60,6 +61,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
     (wallet: ChainWalletBase) => {
       setIsDisonnecting(true)
       disconnect(props.walletRepo, wallet)
+        .catch(err => alert(JSON.stringify(err)))
         .finally(() => setIsDisonnecting(false))
 
       setWallet(undefined)
@@ -231,61 +233,55 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
   )  
 }
 
-function App(): JSX.Element {
-  const chain = chains.find((chain) => { 
-    return chain.chain_id === 'sgenet-1'}
-  )
+const chain = chains.find((chain) => { 
+  return chain.chain_id === 'sgenet-1'}
+)
 
-  const filteredAssets = assets.filter((asset) => asset.chain_name === 'sge' )
+const filteredAssets = assets.filter((asset) => asset.chain_name === 'sge' )
 
-  if(chain) {
-    const walletManager = new WalletManager(
-      [chain],
-      [...keplrWallets, ...leapWallets],
-      new Logger('INFO'),
-      true,
-      true,
-      undefined,
-      filteredAssets,
-      "icns",
-      {
-        signClient: {
-          projectId: 'ba2e675298b4da3e862de7fbef16de91',
-        }
-      },
-      undefined,
-      undefined,
-      {
-        // 1 year
-        duration: 31556926000,
-        callback: () => {
-          console.log('Callback')
-        }
-      }
-    );
+if(!chain) { throw new Error('No chain') }
 
-    const cosmosWalletRepo = walletManager
-      .walletRepos
-      .find((walletRepo) => walletRepo.namespace === 'cosmos')
-
-    if(cosmosWalletRepo) {
-      return <InnerInner walletManager={walletManager} walletRepo={cosmosWalletRepo} />
-    } else {
-      return (
-        <>
-          <h1>Hello</h1>
-          <div>Wallet repo not found</div>
-        </>
-      );
+const walletManager = new WalletManager(
+  [chain],
+  [...keplrWallets, ...leapWallets],
+  new Logger('INFO'),
+  true,
+  true,
+  undefined,
+  filteredAssets,
+  "icns",
+  {
+    signClient: {
+      projectId: 'ba2e675298b4da3e862de7fbef16de91',
     }
+  },
+  undefined,
+  undefined,
+  {
+    // 1 year
+    duration: 31556926000,
+    callback: () => {
+      console.log('Callback')
+    }
+  }
+);
+
+const cosmosWalletRepo = walletManager
+  .walletRepos
+  .find((walletRepo) => walletRepo.namespace === 'cosmos')
+
+
+function App(): JSX.Element {
+  if(cosmosWalletRepo) {
+    return <InnerInner walletManager={walletManager} walletRepo={cosmosWalletRepo} />
   } else {
     return (
       <>
         <h1>Hello</h1>
-        <div>No chain found</div>
+        <div>Wallet repo not found</div>
       </>
-    ); 
-  } 
+    );
+  }
 }
 
 const init = (outletId : string) : void => {
