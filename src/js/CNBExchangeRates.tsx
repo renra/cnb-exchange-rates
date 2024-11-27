@@ -150,7 +150,7 @@ const InnerInner = (props: InnerInnerProps) : JSX.Element => {
 
   React.useEffect(
     () => {
-      props.walletManager.onMounted().catch((err) => alert(JSON.stringify(err)))
+      props.walletManager.onMounted()
 
       return () => {
         props.walletManager.onUnmounted()
